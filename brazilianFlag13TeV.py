@@ -34,7 +34,7 @@ def Plot(files, label, obs):
 
     efficiencies={}
     for mass in radmasses:
-        efficiencies[mass]=1000. # to convert from pb to fb
+        efficiencies[mass]=1. # to convert from fb to fb
 
     fChain = []
     for onefile in files:

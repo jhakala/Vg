@@ -89,7 +89,7 @@ RooPlot* fitSignal(std::string dirName, TH1D *h, int massNum, std::string mass, 
     sg_p2=new RooRealVar((std::string("sg_p2")+postfix).c_str(), "sg_p2", 1.3, 0., 200.);
     sg_p3=new RooRealVar((std::string("sg_p3")+postfix).c_str(), "sg_p3", 5, 0., 300.);
     sg_p4=new RooRealVar((std::string("sg_p4")+postfix).c_str(), "sg_p4", massL, 500., 800.);
-    sg_p5=new RooRealVar((std::string("sg_p5")+postfix).c_str(), "sg_p5", 0.1*massL, 0., 3000.);
+    sg_p5=new RooRealVar((std::string("sg_p5")+postfix).c_str(), "sg_p5", 150, 0., 3000.);
     //sg_p6=new RooRealVar((std::string("sg_p6")+postfix).c_str(), "sg_p6", 0.99, 0.,1.);
     if (postfix == "btag") {
         sg_p6=new RooRealVar((std::string("sg_p6")+postfix).c_str(), "sg_p6", 1., 0.,1.);
@@ -194,8 +194,8 @@ int Display_SignalFits(std::string postfix,
     setTDRStyle();
     
     // Calculate nSignal events given production cross section, branching fractions and efficiency
-    double totalLumi=2690; // /pb
-    double prodXsec_1=1.; // pb
+    double totalLumi=2.690; // /fb
+    double prodXsec_1=1.; // fb
     
     // Interpolation Plots
     std::vector<double> v_sg_p0, v_sg_p0_err;

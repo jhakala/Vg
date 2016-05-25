@@ -18,7 +18,7 @@ do
     pushd $dirName > /dev/null
     text2workspace.py ${dcardName}.txt -o ${dcardName}.root >& /dev/null
     #combine -M Asymptotic -m ${mass} ${dcardName}.txt -t -1 --rMax 2.0 -L libdiphotonsUtils | tee ${logName}
-    combine -M Asymptotic -m ${mass} ${dcardName}.txt  --rMax 2.0 -L libdiphotonsUtils | tee ${logName}
+    combine -M Asymptotic -m ${mass} ${dcardName}.txt -L libdiphotonsUtils | tee ${logName}
     #combine -M HybridNew -H ProfileLikelihood -m ${mass} -t -1 --rMax=0.05 --frequentist --fork 8 ${dcardName}.txt -L libdiphotonsUtils | tee ${logName}
     if [ $debug -eq 1 ]; then
         mkdir -p sig
@@ -29,5 +29,5 @@ do
 done
 
 #combine -M Asymptotic -m ${mass} -t -1 --rMax 2.0 -L libdiphotonsUtils datacard_qqg_${mass}_combined.txt | tee asymp_${mass}_combo.log
-combine -M Asymptotic -m ${mass} --rMax 2.0 -L libdiphotonsUtils datacard_qqg_${mass}_combined.txt | tee asymp_${mass}_combo.log
+combine -M Asymptotic -m ${mass} -L libdiphotonsUtils datacard_qqg_${mass}_combined.txt | tee asymp_${mass}_combo.log
 #combine -M HybridNew -H ProfileLikelihood -m ${mass} -t -1 --rMax=0.05 --frequentist --fork 8 -L libdiphotonsUtils datacard_qqg_${mass}_combined.txt | tee asymp_${mass}_combo.log
