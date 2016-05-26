@@ -229,8 +229,8 @@ int Display_SignalFits(std::string postfix,
     for (unsigned int i=0; i<masses.size(); ++i) {
         std::cout<<" OPENING FILE: " << (dir_preselection+"/"+postfix+"/"+file_histograms+masses.at(i)+file_postfix).c_str() <<std::endl;
         TFile *file = new TFile((dir_preselection+"/"+postfix+"/"+file_histograms+masses.at(i)+file_postfix).c_str());
-        TH1D *h_mX_SR=(TH1D*)file->Get("distribs_5_10_0__x");
-        std::cout<< "distribs_5_10_0__x"<<std::endl;
+        TH1D *h_mX_SR=(TH1D*)file->Get("distribs_0_10_0");
+        std::cout<< "distribs_0_10_0__x"<<std::endl;
         
         double nSignal_init=1.0;
 

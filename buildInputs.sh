@@ -13,9 +13,9 @@ do
     mkdir info_${mass}_${name}
     echo $name
     echo
-    echo "root -x -b -l -q Display_SignalFits.cc\(\"${name}\"\,\"/scratch/osg/lesya/CMSSW_7_1_5/src/limits/Vg/GenSignal\",\"\",\"histos_signal-\",${mass},${rebin}\) > info_${mass}_${name}/signal${mass}_${name}_sig.log"
+    echo "root -x -b -l -q Display_SignalFits.cc\(\"${name}\"\,\"../fitFilesBtagSF/\",\"\",\"histos_signal-\",${mass},${rebin}\) > info_${mass}_${name}/signal${mass}_${name}_sig.log"
     echo
-    root -x -b -l -q Display_SignalFits.cc\(\"${name}\"\,\"/scratch/osg/lesya/CMSSW_7_1_5/src/limits/Vg/GenSignal\",\"\",\"histos_signal-\",${mass},${rebin}\) > info_${mass}_${name}/signal${mass}_${name}_sig.log
+    root -x -b -l -q Display_SignalFits.cc\(\"${name}\"\,\"../fitFilesBtagSF/\",\"\",\"histos_signal-\",${mass},${rebin}\) > info_${mass}_${name}/signal${mass}_${name}_sig.log
     echo
     echo "root -x -b -l -q BackgroundPrediction.c\(\"${name}\",${rebin},${fitModel},${mass}\) > info_${mass}_${name}/data_${name}_bkg.log"
     echo
