@@ -25,12 +25,13 @@ gStyle.SetPadTopMargin(0.06)
 
 def Plot(files, label, obs):
 
-    radmasses = []
-    imass=650
-    for f in files:
-        radmasses.append(imass)
-        imass=imass+10
-    print radmasses
+    #radmasses = []
+    #imass=650
+    #for f in files:
+    #    radmasses.append(imass)
+    #    imass=imass+10
+    #print radmasses
+    radmasses = [750]
 
     efficiencies={}
     for mass in radmasses:
@@ -214,11 +215,12 @@ if __name__ == '__main__':
   for chan in channels:
     print "chan =",chan
     imass=650
-    masses=[]
-    while imass < 3010:
-        masses.append(imass)
-        imass+=10
-    #masses =[650, 740, 745, 750, 755, 760, 765, 850, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2450, 3000, 3250]
+    #masses=[]
+    #while imass < 3010:
+    #    masses.append(imass)
+    #    imass+=10
+    ##masses =[650, 740, 745, 750, 755, 760, 765, 850, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2450, 3000, 3250]
+    masses=[750]
 
     HPplots=[]
     LPplots=[]

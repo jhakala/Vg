@@ -227,10 +227,19 @@ int Display_SignalFits(std::string postfix,
     outfile<<"<body>"<<std::endl;
     
     for (unsigned int i=0; i<masses.size(); ++i) {
+        std::string klj = "";
         std::cout<<" OPENING FILE: " << (dir_preselection+"/"+postfix+"/"+file_histograms+masses.at(i)+file_postfix).c_str() <<std::endl;
+        if (masses.at(i) == "750")       klj = "0";
+        else if (masses.at(i) == "1000") klj = "1";
+        else if (masses.at(i) == "2000") klj = "2";
+        else if (masses.at(i) == "3000") klj = "3";
+        else std::cout << "Invalid mass:" << masses.at(i) << endl;
+        std::cout<<"using mass "<<klj<<std::endl;
         TFile *file = new TFile((dir_preselection+"/"+postfix+"/"+file_histograms+masses.at(i)+file_postfix).c_str());
-        TH1D *h_mX_SR=(TH1D*)file->Get("distribs_0_10_0");
-        std::cout<< "distribs_0_10_0__x"<<std::endl;
+        char kljname [20];
+        sprintf(kljname, "distribs_%s_10_1", klj.c_str());
+        std::cout<< "kljname is" << kljname <<std::endl;
+        TH1D *h_mX_SR=(TH1D*)file->Get(kljname);
         
         double nSignal_init=1.0;
 

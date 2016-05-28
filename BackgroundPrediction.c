@@ -277,27 +277,27 @@ void BackgroundPrediction(std::string pname="antibtag",int rebin_factor=50,int m
     
     TGraph* error_curve[5]; //correct error bands
     TGraphAsymmErrors* dataGr = new TGraphAsymmErrors(h_SR_Prediction->GetNbinsX()); //data w/o 0 entries
+    for (int i=2; i!=5; ++i) {
+        error_curve[i] = new TGraph();
+    }
+    error_curve[2] = (TGraph*)aC_plot->getObject(1)->Clone("errs");
+    int nPoints = error_curve[2]->GetN();
+    
+    error_curve[0] = new TGraph(2*nPoints);
+    error_curve[1] = new TGraph(2*nPoints);
+    
+    error_curve[0]->SetFillStyle(1001);
+    error_curve[1]->SetFillStyle(1001);
+    
+    error_curve[0]->SetFillColor(kGreen);
+    error_curve[1]->SetFillColor(kYellow);
+    
+    error_curve[0]->SetLineColor(kGreen);
+    error_curve[1]->SetLineColor(kYellow);
 
     if (plotBands) {
         RooDataHist pred2("pred2", "Prediction from SB", RooArgList(x), h_SR_Prediction2);
 
-        for (int i=2; i!=5; ++i) {
-            error_curve[i] = new TGraph();
-        }
-        error_curve[2] = (TGraph*)aC_plot->getObject(1)->Clone("errs");
-        int nPoints = error_curve[2]->GetN();
-        
-        error_curve[0] = new TGraph(2*nPoints);
-        error_curve[1] = new TGraph(2*nPoints);
-        
-        error_curve[0]->SetFillStyle(1001);
-        error_curve[1]->SetFillStyle(1001);
-        
-        error_curve[0]->SetFillColor(kGreen);
-        error_curve[1]->SetFillColor(kYellow);
-        
-        error_curve[0]->SetLineColor(kGreen);
-        error_curve[1]->SetLineColor(kYellow);
         
         error_curve[3]->SetFillStyle(1001);
         error_curve[4]->SetFillStyle(1001);
