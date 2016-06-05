@@ -13,7 +13,7 @@
     do
 
     mass=$i
-    fileSi=/scratch/osg/lesya/CMSSW_7_1_5/src/GenSignal/btag/histos_signal-${mass}.root
+    fileSi=../fitFilesBtagSF/btag/histos_signal-${mass}.root
     if [ -a "$fileSi" ]
     then
 	./doOneMassPoint.sh ${mass} ${model}

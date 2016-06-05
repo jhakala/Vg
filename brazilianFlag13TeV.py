@@ -31,7 +31,7 @@ def Plot(files, label, obs):
     #    radmasses.append(imass)
     #    imass=imass+10
     #print radmasses
-    radmasses = [750]
+    radmasses = [750, 1000, 2000, 3000]
 
     efficiencies={}
     for mass in radmasses:
@@ -220,7 +220,7 @@ if __name__ == '__main__':
     #    masses.append(imass)
     #    imass+=10
     ##masses =[650, 740, 745, 750, 755, 760, 765, 850, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2450, 3000, 3250]
-    masses=[750]
+    masses=[750, 1000, 2000, 3000]
 
     HPplots=[]
     LPplots=[]
