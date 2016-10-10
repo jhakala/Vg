@@ -1,12 +1,16 @@
 import ROOT as rt
 from ROOT import *
 import CMS_lumi, tdrstyle
+from sys import argv
 
+if not (argv[1] == "btag" or argv[1] == "antibtag" or argv[1] == "combined"):
+  print "Please pick btag, antibtag, or combined."
+  quit()
 #set the tdr style
 tdrstyle.setTDRStyle()
 
 #change the CMS_lumi variables (see CMS_lumi.py)
-CMS_lumi.lumi_13TeV = "2.7 fb^{-1}"
+CMS_lumi.lumi_13TeV = "27.22 fb^{-1}"
 CMS_lumi.writeExtraText = 1
 CMS_lumi.extraText = "Preliminary"
 CMS_lumi.lumi_sqrtS = "13 TeV" # used with iPeriod = 0, e.g. for simulation-only plots (default is an empty string)
@@ -23,15 +27,15 @@ unblind=True
 gStyle.SetPadRightMargin(0.06)
 gStyle.SetPadTopMargin(0.06)
 
-def Plot(files, label, obs):
+def Plot(files, label, obs, cat):
 
-    #radmasses = []
-    #imass=650
-    #for f in files:
-    #    radmasses.append(imass)
-    #    imass=imass+10
-    #print radmasses
-    radmasses = [750, 1000, 2000, 3000]
+    radmasses = []
+    imass=650
+    for f in files:
+        radmasses.append(imass)
+        imass=imass+10
+    print radmasses
+    #radmasses = [750, 850, 1000, 1150, 1750, 2050, 2450, 3250]
 
     efficiencies={}
     for mass in radmasses:
@@ -76,12 +80,12 @@ def Plot(files, label, obs):
     ymean = []
 
     for i in range(0,len(fChain)):
-        y2up.append(rad[i][0]*efficiencies[radmasses[j]])
-        y1up.append(rad[i][1]*efficiencies[radmasses[j]])
-        ymean.append(rad[i][2]*efficiencies[radmasses[j]])
+        y2up.append(rad[i][0]  *efficiencies[radmasses[j]])
+        y1up.append(rad[i][1]  *efficiencies[radmasses[j]])
+        ymean.append(rad[i][2] *efficiencies[radmasses[j]])
         y1down.append(rad[i][3]*efficiencies[radmasses[j]])
         y2down.append(rad[i][4]*efficiencies[radmasses[j]])
-        yobs.append(rad[i][5]*efficiencies[radmasses[j]])
+        yobs.append(rad[i][5]  *efficiencies[radmasses[j]])
 
     grobs = rt.TGraphErrors(1)
     grobs.SetMarkerStyle(rt.kFullDotLarge)
@@ -126,14 +130,14 @@ def Plot(files, label, obs):
     if withAcceptance:
         mg.GetYaxis().SetTitle("#sigma #times B("+resonance+" #rightarrow "+label.split("_")[0].replace("RS1","").replace("Bulk","")+") #times A (fb)")
     else:
-        mg.GetYaxis().SetTitle("95% CL UL on #sigma #times B(X#rightarrowZ#gamma) (fb)")
-    mg.GetYaxis().SetRangeUser(0.9,1000)
-    mg.GetXaxis().SetNdivisions(508)
+        mg.GetYaxis().SetTitle("95% CL UL on #sigma #times B(X#rightarrowH#gamma) (fb)")
+    mg.GetYaxis().SetRangeUser(10,5000)
+    mg.GetXaxis().SetNdivisions(605)
 
     if "qW" in label.split("_")[0] or "qZ" in label.split("_")[0]:
-        mg.GetXaxis().SetLimits(500,3000)
+        mg.GetXaxis().SetLimits(500,4100)
     else:
-        mg.GetXaxis().SetLimits(500,3150)
+        mg.GetXaxis().SetLimits(500,4100)
 
     # histo to shade
     n=len(fChain)
@@ -166,7 +170,13 @@ def Plot(files, label, obs):
        leg = rt.TLegend(0.5,0.7,0.95,0.89)
        leg2 = rt.TLegend(0.33,0.55,0.95,0.89)
     else:
-        leg = rt.TLegend(0.5,0.65,0.95,0.89,"Z(q#bar{q})#gamma: #frac{#Gamma}{m}=1.4#times10^{-4}, J=0")
+        if argv[1] == "btag":
+          cat = ": btag category"
+        if argv[1] == "antibtag":
+          cat = ": antibtag category"
+        if argv[1] == "combined":
+          cat = ""
+        leg = rt.TLegend(0.5,0.65,0.95,0.89,"H(b#bar{b})#gamma%s"%cat)
         leg2 = rt.TLegend(0.49,0.55,0.95,0.89)
     leg.SetFillColor(rt.kWhite)
     leg.SetFillStyle(0)
@@ -198,13 +208,13 @@ def Plot(files, label, obs):
 
 
     if withAcceptance:
-        c1.SaveAs("brazilianFlag_acc_%s_13TeV.root" %label)
-        c1.SaveAs("brazilianFlag_acc_%s_13TeV.pdf" %label)
+        c1.SaveAs("brazilianFlag_acc_%s_13TeV.root" %argv[1])
+        c1.SaveAs("brazilianFlag_acc_%s_13TeV.pdf" %argv[1])
     else:
-        c1.SaveAs("brazilianFlag_%s_13TeV.root" %label)
-        c1.SaveAs("brazilianFlag_%s_13TeV.pdf" %label)
-        grobs.SaveAs("brazilianFlag_observed_%s_13TeV.root" %label)
-        grmean.SaveAs("brazilianFlag_expected_%s_13TeV.root" %label)
+        c1.SaveAs("brazilianFlag_%s_13TeV.root" %argv[1])
+        c1.SaveAs("brazilianFlag_%s_13TeV.pdf" %argv[1])
+        grobs.SaveAs("brazilianFlag_observed_%s_13TeV.root" %argv[1])
+        grmean.SaveAs("brazilianFlag_expected_%s_13TeV.root" %argv[1])
 
 
 if __name__ == '__main__':
@@ -215,12 +225,12 @@ if __name__ == '__main__':
   for chan in channels:
     print "chan =",chan
     imass=650
-    #masses=[]
-    #while imass < 3010:
-    #    masses.append(imass)
-    #    imass+=10
+    masses=[]
+    while imass < 3226:
+        masses.append(imass)
+        imass+=10
     ##masses =[650, 740, 745, 750, 755, 760, 765, 850, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2450, 3000, 3250]
-    masses=[750, 1000, 2000, 3000]
+    #masses = [750, 850, 1000, 1150, 1750, 2050, 2450, 3250]
 
     HPplots=[]
     LPplots=[]
@@ -228,4 +238,4 @@ if __name__ == '__main__':
     for mass in masses:
        HPplots+=["higgsCombineTest.Asymptotic.mH"+str(mass)+".root"]
 
-    Plot(HPplots,chan+"_Zgamma", unblind)
+    Plot(HPplots,chan+"_Hgamma", unblind, argv[1])

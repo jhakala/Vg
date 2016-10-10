@@ -162,8 +162,9 @@ double lnN(double b, double a, double c)
 int Display_SignalFits(std::string postfix,
                        std::string dir_preselection="/scratch/osg/lesya/CMSSW_7_1_5/src/GenSignal",
                        std::string dir_selection="",
-                       std::string file_histograms="histos_signal-",
-                       int imass=750,
+                       //std::string file_histograms="histos_signal-",
+                       std::string file_histograms="histos_flatTuple_m",
+                       int imass=650,
                        int rebin_factor = 10,
                        bool focus=false)
 {
@@ -171,7 +172,7 @@ int Display_SignalFits(std::string postfix,
     
     writeExtraText = true;       // if extra text
     extraText  = "Simulation";  // default extra text is "Preliminary"
-    lumi_13TeV  = "2.7 fb^{-1}"; // default is "19.7 fb^{-1}"
+    lumi_13TeV  = "27.22 fb^{-1}"; // default is "19.7 fb^{-1}"
     
     rebin = rebin_factor;
     
@@ -194,8 +195,8 @@ int Display_SignalFits(std::string postfix,
     setTDRStyle();
     
     // Calculate nSignal events given production cross section, branching fractions and efficiency
-    double totalLumi=2.690; // /fb
-    double prodXsec_1=1.; // fb
+    double totalLumi=27.22; // /fb
+    //double prodXsec_1=1; // fb
     
     // Interpolation Plots
     std::vector<double> v_sg_p0, v_sg_p0_err;
@@ -228,18 +229,32 @@ int Display_SignalFits(std::string postfix,
     
     for (unsigned int i=0; i<masses.size(); ++i) {
         std::string klj = "";
+        std::string klj2 = "";
         std::cout<<" OPENING FILE: " << (dir_preselection+"/"+postfix+"/"+file_histograms+masses.at(i)+file_postfix).c_str() <<std::endl;
-        if (masses.at(i) == "750")       klj = "0";
-        else if (masses.at(i) == "1000") klj = "1";
-        else if (masses.at(i) == "2000") klj = "2";
-        else if (masses.at(i) == "3000") klj = "3";
-        else std::cout << "Invalid mass:" << masses.at(i) << endl;
+        if (masses.at(i) == "650" )       {klj = "0";  klj2 = "0"; }
+        else if ( masses.at(i) == "750")  {klj = "1";  klj2 = "0"; }
+        else if (masses.at(i) == "850" ) {klj = "2";  klj2 = "0"; }
+        else if (masses.at(i) == "1000")  {klj = "3";  klj2 = "0"; }
+        else if (masses.at(i) == "1150")  {klj = "4";  klj2 = "0"; }
+        else if (masses.at(i) == "1300")  {klj = "5";  klj2 = "0"; }
+        else if (masses.at(i) == "1450" ) {klj = "6";  klj2 = "0"; }
+        else if (masses.at(i) == "1600" ) {klj = "7";  klj2 = "0"; }
+        else if (masses.at(i) == "1750")  {klj = "8";  klj2 = "0"; }
+        else if (masses.at(i) == "1900" ) {klj = "9";  klj2 = "0"; }
+        else if (masses.at(i) == "2050" ) {klj = "10"; klj2 = "0"; }
+        else if (masses.at(i) == "2450" ) {klj = "11"; klj2 = "0"; }
+        else if (masses.at(i) == "2850" ) {klj = "12"; klj2 = "0"; }
+        else if (masses.at(i) == "3250" ) {klj = "13"; klj2 = "0"; }
+        else {klj = "5"; klj2="0__x";}
+        //klj = "5"; klj2="0__x";
+        
         std::cout<<"using mass "<<klj<<std::endl;
         TFile *file = new TFile((dir_preselection+"/"+postfix+"/"+file_histograms+masses.at(i)+file_postfix).c_str());
         char kljname [20];
-        sprintf(kljname, "distribs_%s_10_1", klj.c_str());
+        sprintf(kljname, "distribs_%s_10_%s", klj.c_str(), klj2.c_str());
         std::cout<< "kljname is" << kljname <<std::endl;
         TH1D *h_mX_SR=(TH1D*)file->Get(kljname);
+        std::cout << "Debug step 1: GetSumOfWeights for " << kljname << " is " << h_mX_SR->GetSumOfWeights() << std::endl;
         
         double nSignal_init=1.0;
 
@@ -282,9 +297,9 @@ int Display_SignalFits(std::string postfix,
         
         leg->AddEntry(h_mX_SR, "Signal MC");
         Params params_vg;
-        h_mX_SR->Scale(2690.0);
+        h_mX_SR->Scale(27220.0);
         RooPlot *plot_vg=fitSignal(dirName,h_mX_SR, imass, masses.at(i), kBlack, leg, params_vg,postfix, true);
-        h_mX_SR->Scale(1.0/2690.0);
+        h_mX_SR->Scale(1.0/27220.0);
         v_sg_p0.push_back(params_vg.sg_p0); v_sg_p0_err.push_back(params_vg.sg_p0_err);
         v_sg_p1.push_back(params_vg.sg_p1); v_sg_p1_err.push_back(params_vg.sg_p1_err);
         v_sg_p2.push_back(params_vg.sg_p2); v_sg_p2_err.push_back(params_vg.sg_p2_err);
@@ -369,7 +384,8 @@ int Display_SignalFits(std::string postfix,
         outfile<<"   <img src='"<<("c_mX_SR_"+masses.at(i)+".png")<<"'/><br/>"<<std::endl;
         outfile<<"   <h2 align='center'>Without Kin-Fit. Fitted to an Exp-Gauss-Exp function.</h2><br/>"<<std::endl;
         outfile<<"   === Baseline plot === </br>"<<std::endl;
-        outfile<<"   norm = "<<h_mX_SR->GetSumOfWeights()*totalLumi*prodXsec_1/nSignal_init<<" <br/>"<<std::endl;
+        //outfile<<"   norm = "<<h_mX_SR->GetSumOfWeights()*totalLumi*prodXsec_1/nSignal_init<<" <br/>"<<std::endl;
+        outfile<<"   norm = "<<h_mX_SR->GetSumOfWeights()*totalLumi<<" <br/>"<<std::endl; // weight has already been applied
         /*outfile<<"sg_p0     param   "<<params_vg.sg_p0<<" -"<<quad(sg_p0_errStat/2., sg_p0_errSyst_min)<<"/+"<<quad(sg_p0_errStat/2., sg_p0_errSyst_max)<<" <br/>"<<std::endl;
          outfile<<"sg_p1     param   "<<params_vg.sg_p1<<" -"<<quad(sg_p1_errStat/2., sg_p1_errSyst_min)<<"/+"<<quad(sg_p1_errStat/2., sg_p1_errSyst_max)<<" <br/>"<<std::endl;
          outfile<<"sg_p2     param   "<<params_vg.sg_p2<<"  -"<<quad(sg_p2_errStat/2., sg_p2_errSyst_min)<<"/+"<<quad(sg_p2_errStat/2., sg_p2_errSyst_max)<<" <br/>"<<std::endl;
