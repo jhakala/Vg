@@ -40,7 +40,7 @@ bool useRatioFit=false;
 
 std::string tags="nominal"; // MMMM
 
-double SR_lo=600.;
+double SR_lo=650.;
 double SR_hi=3950.;
 
 Double_t ErfExp(Double_t x, Double_t c, Double_t offset, Double_t width){
@@ -265,7 +265,7 @@ void BackgroundPrediction(std::string pname,int rebin_factor,int model_number = 
     
     std::cout<<"Nevents "<<nEventsSR<<std::endl;
     RooDataHist pred("pred", "Prediction from SB", RooArgList(x), h_SR_Prediction);
-    RooFitResult *r_bg=bg.fitTo(pred, RooFit::Minimizer("Minuit2"), RooFit::Range(625, SR_hi), RooFit::SumW2Error(kTRUE), RooFit::Save());
+    RooFitResult *r_bg=bg.fitTo(pred, RooFit::Minimizer("Minuit2"), RooFit::Range(650, SR_hi), RooFit::SumW2Error(kTRUE), RooFit::Save());
     //RooFitResult *r_bg=bg.fitTo(pred, RooFit::Range(SR_lo, SR_hi), RooFit::Save());
     //RooFitResult *r_bg=bg.fitTo(pred, RooFit::Range(SR_lo, SR_hi), RooFit::Save(),RooFit::SumW2Error(kTRUE));
     std::cout<<" --------------------- Building Envelope --------------------- "<<std::endl;
@@ -609,7 +609,7 @@ void BackgroundPrediction(std::string pname,int rebin_factor,int model_number = 
             w_alt->import(nBackground2);
             std::cout<< "Step 7"<<std::endl;
             std::cout<<alt_bg->getVal() <<std::endl;
-            w_alt->pdf(asd)->fitTo(pred, RooFit::Minimizer("Minuit2"), RooFit::Range(625., SR_hi), RooFit::SumW2Error(kTRUE), RooFit::Save());
+            w_alt->pdf(asd)->fitTo(pred, RooFit::Minimizer("Minuit2"), RooFit::Range(650., SR_hi), RooFit::SumW2Error(kTRUE), RooFit::Save());
 
     	    RooArgSet* altVars = w_alt->pdf(asd)->getVariables();
             TIterator *it2 = altVars->createIterator();
