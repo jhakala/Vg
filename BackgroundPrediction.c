@@ -29,7 +29,7 @@
 using namespace RooFit;
 int iPeriod = 4;    // 1=7TeV, 2=8TeV, 3=7+8TeV, 7=7+8+13TeV
 int iPos =11;
-bool bias= false;
+bool bias= true;
 bool blind = false;
 double H_mass=125.0;
 double mH_diff_cut=40.;
@@ -41,7 +41,7 @@ bool useRatioFit=false;
 std::string tags="nominal"; // MMMM
 
 double SR_lo=600.;
-double SR_hi=3600.;
+double SR_hi=3950.;
 
 Double_t ErfExp(Double_t x, Double_t c, Double_t offset, Double_t width){
     if(width<1e-2)width=1e-2;
@@ -66,6 +66,9 @@ std::string itoa(int i)
 TCanvas* comparePlots2(RooPlot *plot_bC, RooPlot *plot_bS, TH1F *data, TH1F *qcd, std::string title)
 {
     
+    double maxdata=data->GetMaximum();
+    double maxqcd=qcd->GetMaximum();
+    double maxy=(maxdata>maxqcd) ? maxdata : maxqcd;
     RooRealVar x("x", "m_{X} (GeV)", SR_lo, SR_hi);
     TCanvas *c=new TCanvas(("c_RooFit_"+title).c_str(), "c", 700, 700);
     TPad *p_1=new TPad("p_1", "p_1", 0, 0.35, 1, 1);
@@ -86,9 +89,6 @@ TCanvas* comparePlots2(RooPlot *plot_bC, RooPlot *plot_bS, TH1F *data, TH1F *qcd
     p_1->Draw();
     p_2->Draw();
     p_1->cd();
-    double maxdata=data->GetMaximum();
-    double maxqcd=qcd->GetMaximum();
-    double maxy=(maxdata>maxqcd) ? maxdata : maxqcd;
     
     title=";m_{X} (GeV); Events / "+itoa(data->GetBinWidth(1))+" GeV";
     p_1->DrawFrame(SR_lo, 0, SR_hi, maxy*1., title.c_str());
@@ -116,11 +116,11 @@ TCanvas* comparePlots2(RooPlot *plot_bC, RooPlot *plot_bS, TH1F *data, TH1F *qcd
      */
     RooHist* hpull;
     hpull = plot_bS->pullHist();
-    hpull->GetXaxis()->SetRangeUser(SR_lo, SR_hi);
+    hpull->GetXaxis()->SetRangeUser(SR_lo, 1000);
     RooPlot* frameP = x.frame() ;
     frameP->SetTitle("");
     frameP->GetYaxis()->SetTitle("Pull");
-    frameP->GetXaxis()->SetRangeUser(SR_lo, SR_hi);
+    frameP->GetXaxis()->SetRangeUser(SR_lo, 1000);
     
     frameP->addPlotable(hpull,"P");
     frameP->GetYaxis()->SetTitle("Pull");
@@ -172,13 +172,16 @@ void BackgroundPrediction(std::string pname,int rebin_factor,int model_number = 
     double ratio_tau=-1;
     
     TFile *f=new TFile(fname.c_str());
-    TH1F *h_mX_CR_tau=(TH1F*)f->Get("distribs_18_10_1")->Clone("CR_tau");
-    TH1F *h_mX_SR=(TH1F*)f->Get("distribs_18_10_0")->Clone("The_SR");
+    //TODO: this is the index of the data histogram inserted by the readZgamma macro
+    //it corresponds to the index of the data input file in the array defined in the readZgamma macro
+    TH1F *h_mX_CR_tau=(TH1F*)f->Get("distribs_14_10_1")->Clone("CR_tau");
+    TH1F *h_mX_SR=(TH1F*)f->Get("distribs_14_10_0")->Clone("The_SR");
     double maxdata = h_mX_SR->GetMaximum();
-    double nEventsSR = h_mX_SR->Integral(600,4000);
+    double nEventsSR = h_mX_SR->GetSumOfWeights();
     ratio_tau=(h_mX_SR->GetSumOfWeights()/(h_mX_CR_tau->GetSumOfWeights()));
     //double nEventsSR = h_mX_SR->Integral(600,4000);
     
+    std::cout<<"Step 1 "<<ratio_tau<<std::endl;
     std::cout<<"ratio tau "<<ratio_tau<<std::endl;
     
     TH1F *h_SR_Prediction;
@@ -189,17 +192,20 @@ void BackgroundPrediction(std::string pname,int rebin_factor,int model_number = 
         h_mX_CR_tau->Rebin(rebin);
         h_mX_CR_tau->SetLineColor(kBlack);
         h_SR_Prediction=(TH1F*)h_mX_CR_tau->Clone("h_SR_Prediction");
+        std::cout<<"Step 2: blind "<<ratio_tau<<std::endl;
     } else {
         h_SR_Prediction2=(TH1F*)h_mX_SR->Clone("h_SR_Prediction2");
         h_mX_SR->Rebin(rebin);
         h_mX_SR->SetLineColor(kBlack);
         h_SR_Prediction=(TH1F*)h_mX_SR->Clone("h_SR_Prediction");
+        std::cout<<"Step 2: unblind "<<ratio_tau<<std::endl;
         
     }
     h_SR_Prediction->SetMarkerSize(0.7);
     h_SR_Prediction->GetYaxis()->SetTitleOffset(1.2);
     h_SR_Prediction->Sumw2();
     
+    // TODO: is this needed?
     /*TFile *f_sig = new TFile((dirName+"/w_signal_"+iimass.str()+".root").c_str());
     RooWorkspace* xf_sig = (RooWorkspace*)f_sig->Get("Vg");
     RooAbsPdf *xf_sig_pdf = (RooAbsPdf *)xf_sig->pdf((std::string("signal_fixed_")+pname).c_str());
@@ -221,6 +227,7 @@ void BackgroundPrediction(std::string pname,int rebin_factor,int model_number = 
     RooRealVar nBackground((std::string("bg_")+pname+std::string("_norm")).c_str(),"nbkg",h_mX_SR->GetSumOfWeights());
     RooRealVar nBackground2((std::string("alt_bg_")+pname+std::string("_norm")).c_str(),"nbkg",h_mX_SR->GetSumOfWeights());
     std::string blah = pname;
+    // TODO: investigate this...
     //pname=""; //Antibtag=tag to constrain b-tag to the anti-btag shape
     
     
@@ -237,6 +244,7 @@ void BackgroundPrediction(std::string pname,int rebin_factor,int model_number = 
     RooGenericPdf bg = RooGenericPdf((std::string("bg_")+blah).c_str(),"(pow(@0/13000,@1+@2*log(@0/13000)))",RooArgList(x,bg_p1,bg_p2));
   
 
+    // TODO: is this needed for bias studies?
     /*TF1* biasFunc = new TF1("biasFunc","(0.63*x/1000-1.45)",1350,3600);
     TF1* biasFunc2 = new TF1("biasFunc2","TMath::Min(2.,2.3*x/1000-3.8)",1350,3600);
     double bias_term_s = 0;
@@ -257,29 +265,38 @@ void BackgroundPrediction(std::string pname,int rebin_factor,int model_number = 
     
     std::cout<<"Nevents "<<nEventsSR<<std::endl;
     RooDataHist pred("pred", "Prediction from SB", RooArgList(x), h_SR_Prediction);
-    RooFitResult *r_bg=bg.fitTo(pred, RooFit::Minimizer("Minuit2"), RooFit::Range(SR_lo, SR_hi), RooFit::SumW2Error(kTRUE), RooFit::Save());
+    RooFitResult *r_bg=bg.fitTo(pred, RooFit::Minimizer("Minuit2"), RooFit::Range(625, SR_hi), RooFit::SumW2Error(kTRUE), RooFit::Save());
     //RooFitResult *r_bg=bg.fitTo(pred, RooFit::Range(SR_lo, SR_hi), RooFit::Save());
     //RooFitResult *r_bg=bg.fitTo(pred, RooFit::Range(SR_lo, SR_hi), RooFit::Save(),RooFit::SumW2Error(kTRUE));
     std::cout<<" --------------------- Building Envelope --------------------- "<<std::endl;
     //std::cout<< "bg_p0_"<< pname << "   param   "<<bg_p0.getVal() <<  " "<<bg_p0.getError()<<std::endl;
+    std::cout<< "Step 3"<<std::endl;
     std::cout<< "bg_p1_"<< pname << "   param   "<<bg_p1.getVal() <<  " "<<100*bg_p1.getError()<<std::endl;
     std::cout<< "bg_p2_"<< pname << "   param   "<<bg_p2.getVal() <<  " "<<100*bg_p2.getError()<<std::endl;
     //std::cout<< "bias_term_"<< blah << "   param   0 "<<bias_term_s<<std::endl;
     
     RooPlot *aC_plot=x.frame();
+    std::cout<< "Step 3.0: plotBands="<<plotBands<<std::endl;
     pred.plotOn(aC_plot, RooFit::MarkerColor(kPink+2));
-    if (!plotBands) {
-        bg.plotOn(aC_plot, RooFit::VisualizeError(*r_bg, 2), RooFit::FillColor(kYellow));
-        bg.plotOn(aC_plot, RooFit::VisualizeError(*r_bg, 1), RooFit::FillColor(kGreen));
-    }
+    // TODO: should uncomment/debug this
+    //if (!plotBands) {
+    //    std::cout<< "Step 3.01"<<std::endl;
+    //    bg.plotOn(aC_plot, RooFit::VisualizeError(*r_bg, 2), RooFit::FillColor(kYellow));
+    //    std::cout<< "Step 3.02"<<std::endl;
+    //    bg.plotOn(aC_plot, RooFit::VisualizeError(*r_bg, 1), RooFit::FillColor(kGreen));
+    //    std::cout<< "Step 3.03"<<std::endl;
+    //}
+    std::cout<< "Step 3.05"<<std::endl;
     bg.plotOn(aC_plot, RooFit::LineColor(kBlue));
     //pred.plotOn(aC_plot, RooFit::LineColor(kBlack), RooFit::MarkerColor(kBlack));
     
+    std::cout<< "Step 3.1"<<std::endl;
     TGraph* error_curve[5]; //correct error bands
     TGraphAsymmErrors* dataGr = new TGraphAsymmErrors(h_SR_Prediction->GetNbinsX()); //data w/o 0 entries
     for (int i=2; i!=5; ++i) {
         error_curve[i] = new TGraph();
     }
+    std::cout<< "Step 3.2"<<std::endl;
     error_curve[2] = (TGraph*)aC_plot->getObject(1)->Clone("errs");
     int nPoints = error_curve[2]->GetN();
     
@@ -314,6 +331,7 @@ void BackgroundPrediction(std::string pname,int rebin_factor,int model_number = 
     error_curve[1]->SetLineColor(kYellow);
     
     if (plotBands) {
+        std::cout<< "Step 3.3"<<std::endl;
         RooDataHist pred2("pred2", "Prediction from SB", RooArgList(x), h_SR_Prediction2);
 
         error_curve[3]->SetFillStyle(1001);
@@ -331,6 +349,7 @@ void BackgroundPrediction(std::string pname,int rebin_factor,int model_number = 
         double binSize = rebin;
         
         for (int i=0; i!=nPoints; ++i) {
+            std::cout<< "Step 3.4: i=" << i <<std::endl;
             double x0,y0, x1,y1;
             error_curve[2]->GetPoint(i,x0,y0);
             
@@ -348,7 +367,9 @@ void BackgroundPrediction(std::string pname,int rebin_factor,int model_number = 
             // Construct unbinned likelihood
             RooAbsReal* nll = epdf->createNLL(pred2,NumCPU(2));
             // Minimize likelihood w.r.t all parameters before making plots
+            std::cout<< "Step 3.5: i="<<i<<std::endl;
             RooMinimizer* minim = new RooMinimizer(*nll);
+            std::cout<< "Step 3.6: i="<<i<<std::endl;
             minim->setMinimizerType("Minuit2");
             minim->setStrategy(2);
             minim->setPrintLevel(-1);
@@ -358,6 +379,7 @@ void BackgroundPrediction(std::string pname,int rebin_factor,int model_number = 
             RooFitResult* result = minim->lastMinuitFit();
             double errm = nlim->getPropagatedError(*result);
             
+            std::cout<< "Step 4"<<std::endl;
             //std::cout<<x0<<" "<<lowedge<<" "<<upedge<<" "<<y0<<" "<<nlim->getVal()<<" "<<errm<<std::endl;
             
             error_curve[0]->SetPoint(i,x0,(y0-errm));
@@ -426,11 +448,12 @@ void BackgroundPrediction(std::string pname,int rebin_factor,int model_number = 
     int nbins = (int) (SR_hi- SR_lo)/rebin;
     x.setBins(nbins);
     
+    std::cout<< "Step 5"<<std::endl;
     std::cout << "chi2(data) " <<  aC_plot->chiSquare()<<std::endl;
     
     //std::cout << "p-value: data     under hypothesis H0:  " << TMath::Prob(chi2_data->getVal(), nbins - 1) << std::endl;
     
-    aC_plot->GetXaxis()->SetRangeUser(SR_lo, SR_hi);
+    aC_plot->GetXaxis()->SetRangeUser(SR_lo, 1000);
     aC_plot->GetXaxis()->SetLabelOffset(0.02);
     aC_plot->GetYaxis()->SetRangeUser(0.1, 1000.);
     h_SR_Prediction->GetXaxis()->SetRangeUser(SR_lo, SR_hi);
@@ -503,10 +526,10 @@ void BackgroundPrediction(std::string pname,int rebin_factor,int model_number = 
     hpull = aC_plot->pullHist();
     RooPlot* frameP = x.frame() ;
     frameP->SetTitle("");
-    frameP->GetXaxis()->SetRangeUser(SR_lo, SR_hi);
+    frameP->GetXaxis()->SetRangeUser(SR_lo, 1000);
     
     frameP->addPlotable(hpull,"P");
-    frameP->GetYaxis()->SetRangeUser(-7,7);
+    frameP->GetYaxis()->SetRangeUser(-3,3);
     frameP->GetYaxis()->SetNdivisions(505);
     frameP->GetYaxis()->SetTitle("#frac{(data-fit)}{#sigma_{stat}}");
     
@@ -546,6 +569,7 @@ void BackgroundPrediction(std::string pname,int rebin_factor,int model_number = 
     
     int nPars[nModels] = {
         2, 1, 2, 3, 1, 1, 2, 3, 2
+        //2, 1, 2, 1, 1, 2, 3, 2
     };
     
     TString parNames[nModels][3] = {
@@ -570,6 +594,7 @@ void BackgroundPrediction(std::string pname,int rebin_factor,int model_number = 
         RooWorkspace *w_alt=new RooWorkspace("Vg");
         for(int i=model_number; i<=model_number; i++){
             RooMultiPdf *alternative = (RooMultiPdf *)xf->pdf("model_bkg_AntiBtag");
+            std::cout<< "Step 6"<<std::endl;
             std::cout<<"Number of pdfs "<<alternative->getNumPdfs()<<std::endl;
             for (int j=0; j!=alternative->getNumPdfs(); ++j){
                 std::cout<<alternative->getPdf(j)->GetName()<<std::endl;
@@ -582,8 +607,9 @@ void BackgroundPrediction(std::string pname,int rebin_factor,int model_number = 
             range_->setRange(SR_lo,SR_hi);
             char* asd = ("alt_bg_"+blah).c_str()	;
             w_alt->import(nBackground2);
+            std::cout<< "Step 7"<<std::endl;
             std::cout<<alt_bg->getVal() <<std::endl;
-            w_alt->pdf(asd)->fitTo(pred, RooFit::Minimizer("Minuit2"), RooFit::Range(SR_lo, SR_hi), RooFit::SumW2Error(kTRUE), RooFit::Save());
+            w_alt->pdf(asd)->fitTo(pred, RooFit::Minimizer("Minuit2"), RooFit::Range(625., SR_hi), RooFit::SumW2Error(kTRUE), RooFit::Save());
 
     	    RooArgSet* altVars = w_alt->pdf(asd)->getVariables();
             TIterator *it2 = altVars->createIterator();
@@ -613,6 +639,7 @@ void BackgroundPrediction(std::string pname,int rebin_factor,int model_number = 
         c_rooFit->SaveAs((dirName+"/"+name_output+blah+"_multipdf.pdf").c_str());
         
         for (int i=0; i!=nPars[model_number]; ++i) {
+            std::cout<< "Step 8"<<std::endl;
             std::cout<<parNames[model_number][i]<<" param "<< w_alt->var(parNames[model_number][i])->getVal()<<"   "<<w_alt->var(parNames[model_number][i])->getError()<<std::endl;
         }
         
@@ -628,6 +655,7 @@ void BackgroundPrediction(std::string pname,int rebin_factor,int model_number = 
     w->import(nBackground);
     w->SaveAs((dirName+"/w_background_GaussExp.root").c_str());
     
+    std::cout<< "Step 9"<<std::endl;
     TH1F *h_mX_SR_fakeData=(TH1F*)h_mX_SR->Clone("h_mX_SR_fakeData");
     h_mX_SR_fakeData->Scale(nEventsSR/h_mX_SR_fakeData->GetSumOfWeights());
     RooDataHist data_obs("data_obs", "Data", RooArgList(x), h_mX_SR_fakeData);

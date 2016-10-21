@@ -1,0 +1,11 @@
+mkdir datacards
+mkdir infos_antibtag
+mkdir infos_btag
+mkdir pdfs
+mkdir higgsCombineoutputs
+mkdir workspaces
+mkdir higgsCombineTests
+mkdir higgsCombineBiases
+mkdir comboLogs
+mkdir brazilianFlags
+mkdir mlfitoutputs
