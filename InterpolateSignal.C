@@ -26,7 +26,7 @@ void InterpolateSignal(TString postfix) {
     RooRealVar x("x","x",0,10000) ;
     
     const double step = 10;
-    const int nMCpoints = 2;
+    const int nMCpoints = 14;
     //const int nMCpoints = 2;
     //const int nMCpoints = 16; //W=0
     //const int nMCpoints = 14; //W=5
@@ -34,8 +34,8 @@ void InterpolateSignal(TString postfix) {
     
     RooAbsPdf* gMass[nMCpoints];
     //const double masses[nMCpoints] = {300, 400, 500, 650, 740, 745, 750, 755, 760, 765, 850, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2450, 2850, 3250, 3650, 4050, 5000, 6000, 7000};
-    //const double masses[nMCpoints] = {650, 750, 850, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2450, 2850, 3250 };
-    const double masses[nMCpoints] = {650, 750};
+    const double masses[nMCpoints] = {650, 750, 850, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2450, 2850, 3250 };
+    //const double masses[nMCpoints] = {650, 750};
     //const double masses[nMCpoints] = {650, 740, 750, 760, 850, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2450, 3000, 3250}; //W=0
 
     //const double masses[nMCpoints] = {650, 740, 750, 760, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2450, 2850, 3250}; //W=5.6;
