@@ -27,7 +27,7 @@ jmax * number of backgrounds
 kmax * number of systematic uncertainty sources
 ----------
 shapes signal     Vg w_signal_${mass}.root      Vg:signal_fixed_${name}
-shapes background Vg w_background_GaussExp.root Vg:bg_${name}
+shapes background Vg env_pdf_0_13TeV_atlas1_tmp.root Vg:bg_antibtag
 shapes data_obs   Vg w_data.root                Vg:data_obs
 ----------
 ## Observation

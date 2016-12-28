@@ -15,7 +15,7 @@ for name in ${postfix[@]}
 do
     echo building datacard for $name
     dirName="info_${mass}_${name}"
-    dcardName="datacard_${mass}_${name}.txt"
+    dcardName="datacard_${mass}_${name}_alt.txt"
     bgLogName="data_${name}_bkg.log"
     sig_norm=`grep 'norm =' ${dirName}/index.html | awk '{print $3}'`    
     bkg_norm=`grep ' Background number of events = ' ${dirName}/${bgLogName} | awk '{print $6}'`
@@ -67,5 +67,5 @@ EOF
     cards+="${dirName}/${dcardName} "
 done
 
-combineCards.py -S $cards > datacard_qqg_${mass}_combined.txt
+combineCards.py -S $cards > datacard_qqg_${mass}_combined_alt.txt
 

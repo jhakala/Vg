@@ -1,0 +1,13 @@
+universe = vanilla
+Executable = goToVg5.sh 
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT
+Notification = Error
+ 
+arguments = $(Process)
+ 
+Output = condorLogs/biaslog.$(Process).stdout
+Error = condorLogs/biaslog.$(Process).stderr
+Log = condorLogs/biaslog.$(Process).condorlog
+ 
+Queue 261
