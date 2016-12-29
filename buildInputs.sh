@@ -10,6 +10,7 @@ fitModel=$3
 
 for name in ${postfix[@]}
 do
+    ./prepArea.sh ${name}
     mkdir info_${mass}_${name}
     cp env_pdf_0_13TeV_atlas1_tmp.root info_${mass}_${name}
     cp w_data.root info_${mass}_${name}
