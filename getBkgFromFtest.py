@@ -1,4 +1,4 @@
-from os import symlink
+from os import symlink, path
 from optparse import OptionParser
 
 ####
@@ -76,7 +76,7 @@ frame = var.frame()
 rooWS = RooWorkspace("Vg")
 pdfFromMultiPdf = multipdf.getPdf(int(pdfIndex))
 outFileName = "%s_%s.root" % (pdfFromMultiPdf.GetName(), options.outSuffix)
-outFile = TFile(outfileName, "RECREATE")
+outFile = TFile(outFileName, "RECREATE")
 outFile.cd()
 data = wtemplates.data("data_%s" % capName)
 pdfFromMultiPdf.SetName("bg_%s" % options.category)
@@ -108,7 +108,11 @@ if options.makePlot:
 
 rooWS.Write()
 if options.makeLink:
-  symlink(outFileName, "bg_%s.root" % options.category)
+  bkgLinkName = "bg_%s.root" % options.category
+  if not path.isfile(bkgLinkName):
+    symlink(outFileName, bkgLinkName)
 
 if options.linkData:
-  symlink("w_data_%s.root" % options.category, "../fitFilesBtagSF/%s/w_data.root" % options.category)
+  dataLinkName = "w_data_%s.root" % options.category
+  if not path.isfile(dataLinkName):
+    symlink("../dataFiles/w_data_%s.root" % options.category, dataLinkName)
