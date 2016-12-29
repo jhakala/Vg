@@ -16,9 +16,9 @@ do
     echo building datacard for $name
     dirName="info_${mass}_${name}"
     dcardName="datacard_${mass}_${name}.txt"
-    bgLogName="data_${name}_bkg.log"
+    #bgLogName="data_${name}_bkg.log"
     sig_norm=`grep 'norm =' ${dirName}/index.html | awk '{print $3}'`    
-    bkg_norm=`grep ' Background number of events = ' ${dirName}/${bgLogName} | awk '{print $6}'`
+    #bkg_norm=`grep ' Background number of events = ' ${dirName}/${bgLogName} | awk '{print $6}'`
     
     #let's build a datacard!
     cat > ${dirName}/${dcardName} <<EOF
@@ -27,8 +27,8 @@ jmax * number of backgrounds
 kmax * number of systematic uncertainty sources
 ----------
 shapes signal     Vg w_signal_${mass}.root      Vg:signal_fixed_${name}
-shapes background Vg env_pdf_0_13TeV_atlas1_tmp.root Vg:bg_antibtag
-shapes data_obs   Vg w_data.root                Vg:data_obs
+shapes background Vg bg_${name}.root            Vg:bg_${name}
+shapes data_obs   Vg w_data_${name}.root        Vg:data_obs
 ----------
 ## Observation
 bin                     Vg

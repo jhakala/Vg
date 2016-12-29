@@ -9,3 +9,5 @@ mkdir higgsCombineBiases
 mkdir comboLogs
 mkdir brazilianFlags
 mkdir mlfitoutputs
+mkdir condorLogs
+mkdir garbage

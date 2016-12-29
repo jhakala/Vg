@@ -1,3 +1,4 @@
+from os import symlink
 from optparse import OptionParser
 
 ####
@@ -23,6 +24,10 @@ parser.add_option("-b", action="store_true", dest="batch"    , default=False,
                   help = "turn on batch mode"                                            )
 parser.add_option("-p", action="store_true", dest="makePlot" , default=False,
                   help = "toggle generating a plot in pdf form"                          )
+parser.add_option("-l", action="store_true", dest="makeLink" , default=False,
+                  help = "make symlink 'bkg_CATEGORY.root' to the output file"           )
+parser.add_option("-d", action="store_true", dest="linkData" , default=False,
+                  help = "make symlink 'w_data_CATEGORY.root' to w_data in fitFiles dir" )
 (options, args) = parser.parse_args()
 if options.outSuffix is None:
   parser.error("output histogram filename not given")
@@ -70,12 +75,13 @@ frame = var.frame()
 
 rooWS = RooWorkspace("Vg")
 pdfFromMultiPdf = multipdf.getPdf(int(pdfIndex))
-outFile = TFile("%s_%s.root" % (pdfFromMultiPdf.GetName(), options.outSuffix), "RECREATE")
+outFileName = "%s_%s.root" % (pdfFromMultiPdf.GetName(), options.outSuffix)
+outFile = TFile(outfileName, "RECREATE")
 outFile.cd()
 data = wtemplates.data("data_%s" % capName)
 pdfFromMultiPdf.SetName("bg_%s" % options.category)
 
-nBackground=RooRealVar("bg_antibtag_norm", "nbkg", data.sumEntries())
+nBackground=RooRealVar("bg_%s_norm" % options.category, "nbkg", data.sumEntries())
 
 
 getattr(rooWS, 'import')(pdfFromMultiPdf)
@@ -101,3 +107,8 @@ if options.makePlot:
   can.Print("fitFromFtest_%s.pdf" % options.outSuffix)
 
 rooWS.Write()
+if options.makeLink:
+  symlink(outFileName, "bg_%s.root" % options.category)
+
+if options.linkData:
+  symlink("w_data_%s.root" % options.category, "../fitFilesBtagSF/%s/w_data.root" % options.category)
