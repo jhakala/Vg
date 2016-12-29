@@ -12,8 +12,9 @@ for name in ${postfix[@]}
 do
     ./prepArea.sh ${name}
     mkdir info_${mass}_${name}
-    cp env_pdf_0_13TeV_atlas1_tmp.root info_${mass}_${name}
-    cp w_data.root info_${mass}_${name}
+    ln -s ../bg_antibtag.root info_${mass}_${name}/bg_antibtag.root
+    echo "FROM $PWD"
+    ln -s ../../dataFiles/w_data_${name}.root info_${mass}_${name}/w_data_${name}.root
     echo $name
     echo
     echo "root -x -b -l -q Display_SignalFits.cc\(\"${name}\"\,\"../fitFilesBtagSF/\",\"\",\"histos_flatTuple_m\",${mass},${rebin}\) > info_${mass}_${name}/signal${mass}_${name}_sig.log"
