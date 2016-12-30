@@ -6,13 +6,16 @@ postfix=(
 
 rebin=$1
 mass=$2
-fitModel=$3
+proc=$3
 
 for name in ${postfix[@]}
 do
-    ./prepArea.sh ${name}
+    ./prepArea.sh ${name} ${proc}
     mkdir info_${mass}_${name}
     ln -s ../bg_antibtag.root info_${mass}_${name}/bg_antibtag.root
+    if [ "$proc" == "bias" ]; then
+      ln -s ../bg_alt_antibtag.root info_${mass}_${name}/bg_alt_antibtag.root
+    fi
     echo "FROM $PWD"
     ln -s ../../dataFiles/w_data_${name}.root info_${mass}_${name}/w_data_${name}.root
     echo $name

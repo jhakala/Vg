@@ -45,7 +45,7 @@ for m in ${masses[@]}
 do
     if [ $cleanUp -eq 0 ]; then
         #BATCH:
-        ./buildInputs.sh $rebin $m $2
+        ./buildInputs.sh $rebin $m limit
         #prepare for interpolation
         #./buildInputs.sh $rebin $m $1
         ./buildDatacards.sh $m

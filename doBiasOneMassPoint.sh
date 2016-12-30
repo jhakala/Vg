@@ -1,25 +1,25 @@
 #!/bin/bash
 cleanUp=0
-rebin=30
+rebin=1
 debug=0
 nToys=500
 m=$1
-model=$2
+#model=$2
 
 postfix=(
     `cat inputs_to_process.txt`
 )
 
-models=(
-    "env_pdf_0_13TeV_dijet2" "env_pdf_0_13TeV_exp1"  "env_pdf_0_13TeV_expow1" "env_pdf_0_13TeV_expow2" "env_pdf_0_13TeV_pow1" "env_pdf_0_13TeV_lau1" "env_pdf_0_13TeV_atlas1" "env_pdf_0_13TeV_atlas2" "env_pdf_0_13TeV_vvdijet1"
-)
+#models=(
+#    "env_pdf_0_13TeV_dijet2" "env_pdf_0_13TeV_exp1"  "env_pdf_0_13TeV_expow1" "env_pdf_0_13TeV_expow2" "env_pdf_0_13TeV_pow1" "env_pdf_0_13TeV_lau1" "env_pdf_0_13TeV_atlas1" "env_pdf_0_13TeV_atlas2" "env_pdf_0_13TeV_vvdijet1"
+#)
 #models=(
 #    "env_pdf_0_13TeV_dijet2" "env_pdf_0_13TeV_exp1"  "env_pdf_0_13TeV_expow1" "env_pdf_0_13TeV_pow1" "env_pdf_0_13TeV_lau1" "env_pdf_0_13TeV_atlas1" "env_pdf_0_13TeV_atlas2" "env_pdf_0_13TeV_vvdijet1"
 #)
 
 seeds=123321
 
-./buildInputs.sh $rebin $m $model
+./buildInputs.sh $rebin $m bias
 ./buildDatacards_alt.sh $m
 ./buildDatacards.sh $m
 
