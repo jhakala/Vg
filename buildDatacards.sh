@@ -52,7 +52,6 @@ EOF
     
     #now add the systematics to the card
     #grep 'signal_' ${dirName}/index.html | awk '{print $1 " " $2 " " $3 " " $4}' >>  ${dirName}/${dcardName}
-    #grep 'bias_term_' ${dirName}/${bgLogName} | grep ' param ' >> ${dirName}/${dcardName}
     #grep 'bg_' ${dirName}/${bgLogName} | grep 'param' >> ${dirName}/${dcardName}
     if [[ $dcardName == *"anti"* ]]
     then
@@ -62,7 +61,6 @@ EOF
 	fi
 	sed -i 's/WHATKIND/Anti/' ${dirName}/${dcardName}
 	sed -i '/cms_btag_sf_13TeV.*'${btagSys}'.*/d' ${dirName}/${dcardName}
-	#grep 'bg_' ${dirName}/${bgLogName} | grep ' param ' >> ${dirName}/${dcardName}
     else
         if [[ ${mass} -gt 3800 ]]
         then
@@ -70,7 +68,6 @@ EOF
         fi
 	sed -i 's/WHATKIND//' ${dirName}/${dcardName}
 	sed -i '/cms_btag_sf_13TeV.*'${antibtagSys}'.*/d' ${dirName}/${dcardName}
-        #grep 'bg_' ${dirName}/${bgLogName} | grep 'param' >> ${dirName}/${dcardName}
     fi
 
     cards+="${dirName}/${dcardName} "

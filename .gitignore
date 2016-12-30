@@ -22,3 +22,4 @@ debug
 AutoDict*
 *.swp
 .__*
+.nfs*

@@ -14,20 +14,22 @@ from optparse import OptionParser
 parser = OptionParser()
 #parser.add_option("-i", "--inFtest", dest="inFtest", 
 #                  help = "the input mlfit rootfile")
-parser.add_option("-o", "--outSuffix" , dest="outSuffix", default="tmp",
-                  help = "the suffix for the of the output : blahblahPdf_OUTSUFFIX.root" )
 parser.add_option("-c", "--category"  , dest="category",
-                  help = "either 'btag' or 'antibtag'"                                   )
+                  help = "either 'btag' or 'antibtag'"                                         )
 parser.add_option("-n", "--pdfIndex"   , dest="pdfIndex",
-                  help = "the index of the desired pdf in the multipdf"                  )
+                  help = "the index of the desired pdf in the multipdf"                        )
+parser.add_option("-o", "--outSuffix" , dest="outSuffix"     , default="tmp",
+                  help = "the suffix for the of the output : blahblahPdf_OUTSUFFIX.root"       )
+parser.add_option("-a", "--altIndex"   , dest="altIndex"     ,
+                  help = "the index of the alternative pdf in the multipdf (for bias studies)" )
 parser.add_option("-b", action="store_true", dest="batch"    , default=False,
-                  help = "turn on batch mode"                                            )
+                  help = "turn on batch mode"                                                  )
 parser.add_option("-p", action="store_true", dest="makePlot" , default=False,
-                  help = "toggle generating a plot in pdf form"                          )
+                  help = "toggle generating a plot in pdf form"                                )
 parser.add_option("-l", action="store_true", dest="makeLink" , default=False,
-                  help = "make symlink 'bkg_CATEGORY.root' to the output file"           )
+                  help = "make symlink 'bkg_CATEGORY.root' to the output file"                 )
 parser.add_option("-d", action="store_true", dest="linkData" , default=False,
-                  help = "make symlink 'w_data_CATEGORY.root' to w_data in fitFiles dir" )
+                  help = "make symlink 'w_data_CATEGORY.root' to w_data in fitFiles dir"       )
 (options, args) = parser.parse_args()
 if options.outSuffix is None:
   parser.error("output histogram filename not given")
@@ -35,6 +37,37 @@ if options.outSuffix is None:
 from ROOT import *
 if options.batch:
   gROOT.SetBatch()
+
+def getPdfFromMultiPdf(inWorkspace, multiPdf, multiPdfIndex, makePlot) :
+  rooWS = RooWorkspace("Vg")
+  pdfFromMultiPdf = multiPdf.getPdf(int(multiPdfIndex))
+  data = inWorkspace.data("data_%s" % capName)
+  pdfFromMultiPdf.SetName("bg_%s" % options.category)
+  
+  nBackground=RooRealVar("bg_%s_norm" % options.category, "nbkg", data.sumEntries())
+  
+  getattr(rooWS, 'import')(pdfFromMultiPdf)
+  getattr(rooWS, 'import')(data)
+  getattr(rooWS, 'import')(nBackground)
+  
+  varset   = pdfFromMultiPdf.getVariables()
+  varIt    = varset.iterator()
+  paramVar = varIt.Next()
+  while paramVar:
+    if paramVar.GetName() != var.GetName(): # don't remove the range from the "x" variable
+      rooWS.var(paramVar.GetName()).removeRange()
+      print "removed range from pdf %s with name %s" % (selectedPdf, paramVar.GetName())
+    paramVar = varIt.Next()
+  
+  result = pdfFromMultiPdf.fitTo(data, RooFit.Minimizer("Minuit2"), RooFit.Range(700, 4700), RooFit.SumW2Error(kTRUE), RooFit.Save())
+  data.plotOn(frame)
+  pdfFromMultiPdf.plotOn(frame)
+  can = TCanvas()
+  can.cd()
+  frame.Draw()
+  if makePlot:
+    can.Print("fitFromFtest_%s.pdf" % options.outSuffix)
+  return {"rooWS" : rooWS, "pdfFromMultiPdf": pdfFromMultiPdf}
 
 if options.category == "antibtag" :
    inFtest = "newMultiPdf_antibtag.root"
@@ -73,44 +106,32 @@ else:
 var = wtemplates.var("x")
 frame = var.frame()
 
-rooWS = RooWorkspace("Vg")
-pdfFromMultiPdf = multipdf.getPdf(int(pdfIndex))
-outFileName = "%s_%s.root" % (pdfFromMultiPdf.GetName(), options.outSuffix)
+backgroundDict     = getPdfFromMultiPdf(wtemplates, multipdf, pdfIndex, options.makePlot)
+bkgPdfFromMultiPdf = backgroundDict["pdfFromMultiPdf"]
+backgroundWS       = backgroundDict["rooWS"]
+outFileName        = "%s_%s.root" % (bkgPdfFromMultiPdf.GetName(), options.outSuffix)
 outFile = TFile(outFileName, "RECREATE")
 outFile.cd()
-data = wtemplates.data("data_%s" % capName)
-pdfFromMultiPdf.SetName("bg_%s" % options.category)
 
-nBackground=RooRealVar("bg_%s_norm" % options.category, "nbkg", data.sumEntries())
-
-
-getattr(rooWS, 'import')(pdfFromMultiPdf)
-getattr(rooWS, 'import')(data)
-getattr(rooWS, 'import')(nBackground)
-
-varset   = pdfFromMultiPdf.getVariables()
-varIt    = varset.iterator()
-paramVar = varIt.Next()
-while paramVar:
-  if paramVar.GetName() != var.GetName(): # don't remove the range from the "x" variable
-    rooWS.var(paramVar.GetName()).removeRange()
-    print "removed range from pdf %s with name %s" % (selectedPdf, paramVar.GetName())
-  paramVar = varIt.Next()
-
-result = pdfFromMultiPdf.fitTo(data, RooFit.Minimizer("Minuit2"), RooFit.Range(700, 4700), RooFit.SumW2Error(kTRUE), RooFit.Save())
-data.plotOn(frame)
-pdfFromMultiPdf.plotOn(frame)
-can = TCanvas()
-can.cd()
-frame.Draw()
-if options.makePlot:
-  can.Print("fitFromFtest_%s.pdf" % options.outSuffix)
-
-rooWS.Write()
+backgroundWS.Write()
 if options.makeLink:
   bkgLinkName = "bg_%s.root" % options.category
   if not path.isfile(bkgLinkName):
     symlink(outFileName, bkgLinkName)
+
+if options.altIndex is not None:
+  altDict            = getPdfFromMultiPdf(wtemplates, multipdf, int(options.altIndex), options.makePlot)
+  altPdfFromMultiPdf = altDict["pdfFromMultiPdf"]
+  altWS              = altDict["rooWS"]
+  altFileName        = "%s_%s.root" % (altPdfFromMultiPdf.GetName(), options.outSuffix)
+  altFile = TFile(altFileName, "RECREATE")
+  altFile.cd()
+  
+  altWS.Write()
+  if options.makeLink:
+    altLinkName = "bg_alt_%s.root" % options.category
+    if not path.isfile(altLinkName):
+      symlink(altFileName, altLinkName)
 
 if options.linkData:
   dataLinkName = "w_data_%s.root" % options.category
