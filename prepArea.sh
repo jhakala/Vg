@@ -4,8 +4,8 @@
 # John Hakala, 12/30/2016
 ####
 if [ "$#" -ne "2" ]; then
-  echo "you must supply two arguments to this script:
-  echo "the first is either 'btag',  'antibtag', or 'both'.
+  echo "you must supply two arguments to this script:"
+  echo "the first is either 'btag',  'antibtag', or 'both'"
   echo "the second is either 'limit' or 'bias'"
   echo "example:"
   echo "./prepArea.sh btag limit"

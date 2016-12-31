@@ -1,5 +1,5 @@
-from os import symlink, path
 from optparse import OptionParser
+from forcelink import force_symlink
 
 ####
 # Script for getting a background prediction pdf from the results of the fTest
@@ -42,6 +42,7 @@ def getPdfFromMultiPdf(inWorkspace, multiPdf, multiPdfIndex, makePlot) :
   rooWS = RooWorkspace("Vg")
   pdfFromMultiPdf = multiPdf.getPdf(int(multiPdfIndex))
   data = inWorkspace.data("data_%s" % capName)
+  origName = pdfFromMultiPdf.GetName()
   pdfFromMultiPdf.SetName("bg_%s" % options.category)
   
   nBackground=RooRealVar("bg_%s_norm" % options.category, "nbkg", data.sumEntries())
@@ -67,7 +68,7 @@ def getPdfFromMultiPdf(inWorkspace, multiPdf, multiPdfIndex, makePlot) :
   frame.Draw()
   if makePlot:
     can.Print("fitFromFtest_%s.pdf" % options.outSuffix)
-  return {"rooWS" : rooWS, "pdfFromMultiPdf": pdfFromMultiPdf}
+  return {"rooWS" : rooWS, "pdfFromMultiPdf": pdfFromMultiPdf, "origName" : origName}
 
 if options.category == "antibtag" :
    inFtest = "newMultiPdf_antibtag.root"
@@ -109,31 +110,28 @@ frame = var.frame()
 backgroundDict     = getPdfFromMultiPdf(wtemplates, multipdf, pdfIndex, options.makePlot)
 bkgPdfFromMultiPdf = backgroundDict["pdfFromMultiPdf"]
 backgroundWS       = backgroundDict["rooWS"]
-outFileName        = "%s_%s.root" % (bkgPdfFromMultiPdf.GetName(), options.outSuffix)
+outFileName        = "%s_%s.root" % (backgroundDict["origName"], options.outSuffix)
 outFile = TFile(outFileName, "RECREATE")
 outFile.cd()
 
 backgroundWS.Write()
 if options.makeLink:
   bkgLinkName = "bg_%s.root" % options.category
-  if not path.isfile(bkgLinkName):
-    symlink(outFileName, bkgLinkName)
+  force_symlink(outFileName, bkgLinkName)
 
 if options.altIndex is not None:
   altDict            = getPdfFromMultiPdf(wtemplates, multipdf, int(options.altIndex), options.makePlot)
   altPdfFromMultiPdf = altDict["pdfFromMultiPdf"]
   altWS              = altDict["rooWS"]
-  altFileName        = "%s_%s.root" % (altPdfFromMultiPdf.GetName(), options.outSuffix)
+  altFileName        = "%s_%s.root" % (altDict["origName"], options.outSuffix)
   altFile = TFile(altFileName, "RECREATE")
   altFile.cd()
   
   altWS.Write()
   if options.makeLink:
     altLinkName = "bg_alt_%s.root" % options.category
-    if not path.isfile(altLinkName):
-      symlink(altFileName, altLinkName)
+    force_symlink(altFileName, altLinkName)
 
 if options.linkData:
   dataLinkName = "w_data_%s.root" % options.category
-  if not path.isfile(dataLinkName):
-    symlink("../dataFiles/w_data_%s.root" % options.category, dataLinkName)
+  force_symlink("../dataFiles/w_data_%s.root" % options.category, dataLinkName)
