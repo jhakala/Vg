@@ -34,21 +34,24 @@ parser.add_option("-d", action="store_true", dest="linkData" , default=False,
 if options.outSuffix is None:
   parser.error("output histogram filename not given")
 
+if options.linkData:
+  dataLinkName = "w_data_%s.root" % options.category
+  force_symlink("../dataFiles/w_data_%s.root" % options.category, dataLinkName)
+
 from ROOT import *
 if options.batch:
   gROOT.SetBatch()
 
-def getPdfFromMultiPdf(inWorkspace, multiPdf, multiPdfIndex, makePlot) :
+def getPdfFromMultiPdf(inWorkspace, multiPdf, multiPdfIndex, makePlot, rooHistData) :
   rooWS = RooWorkspace("Vg")
   pdfFromMultiPdf = multiPdf.getPdf(int(multiPdfIndex))
-  data = inWorkspace.data("data_%s" % capName)
   origName = pdfFromMultiPdf.GetName()
   pdfFromMultiPdf.SetName("bg_%s" % options.category)
   
-  nBackground=RooRealVar("bg_%s_norm" % options.category, "nbkg", data.sumEntries())
+  nBackground=RooRealVar("bg_%s_norm" % options.category, "nbkg", rooHistData.sumEntries())
   
   getattr(rooWS, 'import')(pdfFromMultiPdf)
-  getattr(rooWS, 'import')(data)
+  getattr(rooWS, 'import')(rooHistData)
   getattr(rooWS, 'import')(nBackground)
   
   varset   = pdfFromMultiPdf.getVariables()
@@ -60,14 +63,14 @@ def getPdfFromMultiPdf(inWorkspace, multiPdf, multiPdfIndex, makePlot) :
       print "removed range from pdf %s with name %s" % (selectedPdf, paramVar.GetName())
     paramVar = varIt.Next()
   
-  result = pdfFromMultiPdf.fitTo(data, RooFit.Minimizer("Minuit2"), RooFit.Range(700, 4700), RooFit.SumW2Error(kTRUE), RooFit.Save())
-  data.plotOn(frame)
+  result = pdfFromMultiPdf.fitTo(rooHistData, RooFit.Minimizer("Minuit2"), RooFit.Range(700, 4700), RooFit.SumW2Error(kTRUE), RooFit.Save())
+  rooHistData.plotOn(frame)
   pdfFromMultiPdf.plotOn(frame)
   can = TCanvas()
   can.cd()
   frame.Draw()
   if makePlot:
-    can.Print("fitFromFtest_%s.pdf" % options.outSuffix)
+    can.Print("fitFromFtest_%s_%s_%s.pdf" % (options.category, origName, options.outSuffix))
   return {"rooWS" : rooWS, "pdfFromMultiPdf": pdfFromMultiPdf, "origName" : origName}
 
 if options.category == "antibtag" :
@@ -85,6 +88,11 @@ gSystem.Load("libHiggsAnalysisCombinedLimit")
 inFile = TFile(inFtest)
 wtemplates = inFile.Get("wtemplates")
 multipdf = wtemplates.pdf("model_bkg_%s" % capName)
+
+dataFile = TFile(dataLinkName)
+dataWS   = dataFile.Get("Vg")
+dataRooHist  = dataWS.data("data_obs")
+
 if options.pdfIndex is None:
   nPdfs = multipdf.getNumPdfs()
   pdfNames = []
@@ -107,7 +115,7 @@ else:
 var = wtemplates.var("x")
 frame = var.frame()
 
-backgroundDict     = getPdfFromMultiPdf(wtemplates, multipdf, pdfIndex, options.makePlot)
+backgroundDict     = getPdfFromMultiPdf(wtemplates, multipdf, pdfIndex, options.makePlot, dataRooHist)
 bkgPdfFromMultiPdf = backgroundDict["pdfFromMultiPdf"]
 backgroundWS       = backgroundDict["rooWS"]
 outFileName        = "%s_%s.root" % (backgroundDict["origName"], options.outSuffix)
@@ -132,6 +140,3 @@ if options.altIndex is not None:
     altLinkName = "bg_alt_%s.root" % options.category
     force_symlink(altFileName, altLinkName)
 
-if options.linkData:
-  dataLinkName = "w_data_%s.root" % options.category
-  force_symlink("../dataFiles/w_data_%s.root" % options.category, dataLinkName)

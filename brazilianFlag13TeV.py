@@ -30,7 +30,7 @@ gStyle.SetPadTopMargin(0.06)
 def Plot(files, label, obs, cat):
 
     radmasses = []
-    imass=700
+    imass=710
     for f in files:
         radmasses.append(imass)
         imass=imass+40
@@ -44,8 +44,9 @@ def Plot(files, label, obs, cat):
     fChain = []
     for onefile in files:
         print onefile
-        fileIN = rt.TFile.Open(onefile)
+        fileIN = TFile(onefile)
         fChain.append(fileIN.Get("limit;1"))  
+        print "fchain[-1]: %s" % fChain[-1].GetName()
 
         rt.gROOT.ProcessLine("struct limit_t {Double_t limit;};")
         from ROOT import limit_t
@@ -224,11 +225,11 @@ if __name__ == '__main__':
 
   for chan in channels:
     print "chan =",chan
-    imass=700
+    imass=710
     masses=[]
     while imass < 3251:
         masses.append(imass)
-        imass+=30
+        imass+=40
     ##masses =[650, 740, 745, 750, 755, 760, 765, 850, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2450, 3000, 3250]
     #masses = [750, 850, 1000, 1150, 1750, 2050, 2450, 3250]
 
@@ -237,5 +238,6 @@ if __name__ == '__main__':
     combinedplots=[]
     for mass in masses:
        HPplots+=["higgsCombineTest.Asymptotic.mH"+str(mass)+".root"]
+       print "added HPplot %s" % HPplots[-1]
 
     Plot(HPplots,chan+"_Hgamma", unblind, argv[1])
