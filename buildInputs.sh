@@ -12,12 +12,12 @@ for name in ${postfix[@]}
 do
     ./prepArea.sh ${name} ${proc}
     mkdir info_${mass}_${name}
-    ln -s ../bg_antibtag.root info_${mass}_${name}/bg_antibtag.root
+    cp ../bg_antibtag.root info_${mass}_${name}/bg_antibtag.root
     if [ "$proc" == "bias" ]; then
-      ln -s ../bg_alt_antibtag.root info_${mass}_${name}/bg_alt_antibtag.root
+      cp ../bg_alt_antibtag.root info_${mass}_${name}/bg_alt_antibtag.root
     fi
     echo "FROM $PWD"
-    ln -s ../../dataFiles/w_data_${name}.root info_${mass}_${name}/w_data_${name}.root
+    cp ../../dataFiles/w_data_${name}.root info_${mass}_${name}/w_data_${name}.root
     echo $name
     echo
     echo "root -x -b -l -q Display_SignalFits.cc\(\"${name}\"\,\"../fitFilesBtagSF/\",\"\",\"histos_flatTuple_m\",${mass},${rebin}\) > info_${mass}_${name}/signal${mass}_${name}_sig.log"
