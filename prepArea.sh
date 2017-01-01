@@ -11,7 +11,7 @@ if [ "$#" -ne "2" ]; then
   echo "./prepArea.sh btag limit"
   exit 1
 fi
-BIASMODELINDEX="3"
+BIASMODELINDEX="1"
 CATEGORY=$1
 DATE=`date +%F`
 IVGDIR=`echo -n $PWD | sed 's/ //g' | tail -c 1`
