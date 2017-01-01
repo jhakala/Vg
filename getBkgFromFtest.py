@@ -128,7 +128,7 @@ if options.makeLink:
   force_symlink(outFileName, bkgLinkName)
 
 if options.altIndex is not None:
-  altDict            = getPdfFromMultiPdf(wtemplates, multipdf, int(options.altIndex), options.makePlot)
+  altDict            = getPdfFromMultiPdf(wtemplates, multipdf, int(options.altIndex), options.makePlot, dataRooHist)
   altPdfFromMultiPdf = altDict["pdfFromMultiPdf"]
   altWS              = altDict["rooWS"]
   altFileName        = "%s_%s.root" % (altDict["origName"], options.outSuffix)
