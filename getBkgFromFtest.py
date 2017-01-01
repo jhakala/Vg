@@ -34,8 +34,8 @@ parser.add_option("-d", action="store_true", dest="linkData" , default=False,
 if options.outSuffix is None:
   parser.error("output histogram filename not given")
 
+dataLinkName = "w_data_%s.root" % options.category
 if options.linkData:
-  dataLinkName = "w_data_%s.root" % options.category
   force_symlink("../dataFiles/w_data_%s.root" % options.category, dataLinkName)
 
 from ROOT import *
@@ -63,7 +63,7 @@ def getPdfFromMultiPdf(inWorkspace, multiPdf, multiPdfIndex, makePlot, rooHistDa
       print "removed range from pdf %s with name %s" % (selectedPdf, paramVar.GetName())
     paramVar = varIt.Next()
   
-  result = pdfFromMultiPdf.fitTo(rooHistData, RooFit.Minimizer("Minuit2"), RooFit.Range(700, 4700), RooFit.SumW2Error(kTRUE), RooFit.Save())
+  result = pdfFromMultiPdf.fitTo(rooHistData, RooFit.Minimizer("Minuit2", "minimize"), RooFit.Range(700, 4700), RooFit.Strategy(2), RooFit.SumW2Error(kTRUE), RooFit.Save(1), RooFit.Offset(kTRUE))
   rooHistData.plotOn(frame)
   pdfFromMultiPdf.plotOn(frame)
   can = TCanvas()
