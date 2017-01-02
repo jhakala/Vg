@@ -11,6 +11,7 @@ tdrstyle.setTDRStyle()
 
 #change the CMS_lumi variables (see CMS_lumi.py)
 CMS_lumi.lumi_13TeV = "36.42 fb^{-1}"
+
 CMS_lumi.writeExtraText = 1
 CMS_lumi.extraText = "Preliminary"
 CMS_lumi.lumi_sqrtS = "13 TeV" # used with iPeriod = 0, e.g. for simulation-only plots (default is an empty string)
@@ -35,6 +36,7 @@ def Plot(files, label, obs, cat):
     print "files is:"
     print files
     print "radmasses is:" 
+
     print radmasses
     #radmasses = [750, 850, 1000, 1150, 1750, 2050, 2450, 3250]
 
@@ -238,6 +240,7 @@ if __name__ == '__main__':
     while imass < 3251:
         masses.append(imass)
         imass+=40
+
     ##masses =[650, 740, 745, 750, 755, 760, 765, 850, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2450, 3000, 3250]
     #masses = [750, 850, 1000, 1150, 1750, 2050, 2450, 3250]
 

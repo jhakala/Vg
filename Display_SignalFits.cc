@@ -204,6 +204,7 @@ int Display_SignalFits(std::string postfix,
                        std::string file_histograms="histos_flatTuple_m",
                        int imass=650,
                        int rebin_factor = 1,
+
                        bool focus=false)
 {
     
@@ -211,6 +212,7 @@ int Display_SignalFits(std::string postfix,
     writeExtraText = true;       // if extra text
     extraText  = "Simulation";  // default extra text is "Preliminary"
     lumi_13TeV  = "36.42 fb^{-1}"; // default is "19.7 fb^{-1}"
+
     
     rebin = rebin_factor;
     
@@ -234,6 +236,7 @@ int Display_SignalFits(std::string postfix,
     
     // Calculate nSignal events given production cross section, branching fractions and efficiency
     double totalLumi=36.42; // /fb
+
     //double prodXsec_1=1; // fb
     
     // Interpolation Plots
@@ -338,6 +341,7 @@ int Display_SignalFits(std::string postfix,
         h_mX_SR->Scale(36420.0);
         RooPlot *plot_vg=fitSignal(dirName,h_mX_SR, imass, masses.at(i), kBlack, leg, params_vg,postfix, true);
         h_mX_SR->Scale(1.0/36420.0);
+
         v_sg_p0.push_back(params_vg.sg_p0); v_sg_p0_err.push_back(params_vg.sg_p0_err);
         v_sg_p1.push_back(params_vg.sg_p1); v_sg_p1_err.push_back(params_vg.sg_p1_err);
         v_sg_p2.push_back(params_vg.sg_p2); v_sg_p2_err.push_back(params_vg.sg_p2_err);

@@ -28,6 +28,7 @@ void InterpolateSignal(TString postfix) {
     const double step = 10;
     const int nMCpoints = 13;
     //const int nMCpoints = 2;
+
     //const int nMCpoints = 16; //W=0
     //const int nMCpoints = 14; //W=5
     //const int nMCpoints = 13; //W=5
@@ -36,6 +37,7 @@ void InterpolateSignal(TString postfix) {
     //const double masses[nMCpoints] = {300, 400, 500, 650, 740, 745, 750, 755, 760, 765, 850, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2450, 2850, 3250, 3650, 4050, 5000, 6000, 7000};
     const double masses[nMCpoints] = {750, 850, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2450, 2850, 3250 };
     //const double masses[nMCpoints] = {650, 750};
+
     //const double masses[nMCpoints] = {650, 740, 750, 760, 850, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2450, 3000, 3250}; //W=0
 
     //const double masses[nMCpoints] = {650, 740, 750, 760, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2450, 2850, 3250}; //W=5.6;
@@ -78,6 +80,7 @@ void InterpolateSignal(TString postfix) {
         std::cout << "got funceff for antibtag" << std::endl;
         funcEff = new TF1("fitFunctionAntiBtag", "[0]*TMath::ATan((x-[1])/[2])+[3]", 650, 3250);//W=0
         funcEff->SetParameters(0.145414, 588.616, 114.748, -0.0691404); //W=0
+
         //funcEff->SetParameters(-0.123432,0.000574454,-3.94051e-07,1.10552e-10,-1.13539e-14); //W=5.6 all range
         //funcEff->SetParameters(-0.174736,0.00069154,-4.90708e-07,1.42739e-10,-1.51912e-14); //W=5.6 600-3600
         //funcEff->SetParameters(-0.124845,0.000571665,-4.0269e-07,1.15632e-10,-1.20963e-14); //W=10.0 all range
@@ -85,6 +88,7 @@ void InterpolateSignal(TString postfix) {
     } else if (postfix == "btag") {
         funcEff = new TF1("fitFunctionBtag", "[0]+[1]*TMath::ATan((x-[2])^2/[3])*TMath::Exp(-x/[4])", 650, 3250);
         funcEff->SetParameters(-0.0153445, 0.0564823, 533.601, 43779.2, 7346.64); //W=0
+
         //funcEff = new TF1("effFunc","pol4",0,10000);//W=5.6
         //funcEff->SetParameters(-0.0371581,0.000141343,-1.06872e-07,3.13078e-11,-3.1873e-15); //W=5.6 all range
         //funcEff->SetParameters(-0.0474795,0.000164342,-1.24851e-07,3.69595e-11,-3.82402e-15); //W=5.6 600-3600
@@ -141,6 +145,7 @@ void InterpolateSignal(TString postfix) {
             double weight = effcy;
             //TH1D* distribs0 = new TH1D("distribs_5_10_0","",4000,0,4000);
             TH1D* distribs0 = (TH1D*)lmorph.createHistogram("distribs_5_10_0",x,Binning(4000,700,4700));
+
             
             //double effcy2 = distribs0->Integral(600,3600);
             
@@ -149,6 +154,7 @@ void InterpolateSignal(TString postfix) {
             distribs0->Scale(weight);
             //for (int k=0; k!=600; ++k)
             //    distribs0->SetBinContent(k+1,0);
+
             TFile* fileNew = new TFile(Form("GenSignal/")+postfix+Form("/histos_signal-%d.root",int(masses[iPoint+1]-i*step)),"RECREATE");
             distribs0->Write();
             std::cout << "wrote file " << fileNew->GetName() << std::endl;

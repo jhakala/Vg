@@ -1,6 +1,7 @@
 #!/bin/bash
 cleanUp=0
 rebin=1
+
 debug=0
 nToys=500
 m=$1
@@ -18,6 +19,7 @@ postfix=(
 #)
 
 seeds=123321
+
 
 ./buildInputs.sh $rebin $m bias
 ./buildDatacards_alt.sh $m
@@ -42,3 +44,4 @@ combine datacard_qqg_${m}_combined_alt.txt -M GenerateOnly -m $m -t $nToys  --sa
 combine datacard_qqg_${m}_combined.txt -M MaxLikelihoodFit -m $m --expectSignal=0.0 --rMin=-10000 --rMax=10000 -t $nToys --toysFile=higgsCombinebiasTest.GenerateOnly.mH${m}.123321.root -s 123321 --toysFrequentist --noErrors --minos none -n output${m} 
 
 #combine datacard_qqg_${m}_combined.txt -M MaxLikelihoodFit -m $m --expectSignal=0.0 --rMin=-10000 --rMax=10000 -t $nToys --toysFile=higgsCombinebiasTest.GenerateOnly.mH${m}.123321.root -s 123321 --toysFrequentist --noErrors --minos none -n output${m}
+

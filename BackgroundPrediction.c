@@ -45,7 +45,8 @@ std::string tags="nominal"; // MMMM
 double SR_lo=700.;
 double SR_hi=10000.;
 RooRealVar x("x", "m_{X} (GeV)", SR_lo, SR_hi);
-x->setBins(4000);
+x->setBins(4000); // this isn't used any more
+
 
 Double_t ErfExp(Double_t x, Double_t c, Double_t offset, Double_t width){
   if(width<1e-2)width=1e-2;
@@ -102,6 +103,7 @@ TCanvas* comparePlots2(RooPlot *plot_bC, RooPlot *plot_bS, TH1F *data, TH1F *qcd
   CMS_lumi( p_1, iPeriod, iPos );
   p_2->cd();
   /* TH1F *h_ratio=(TH1F*)data->Clone("h_ratio");
+
      h_ratio->GetYaxis()->SetTitle("VR/VSB Ratio");
      h_ratio->GetXaxis()->SetTitle("m_{X} (GeV)");
      h_ratio->SetTitle("");//("VR/VR-SB Ratio "+title+" ; VR/VR-SB Ratio").c_str());
@@ -146,6 +148,7 @@ TCanvas* comparePlots2(RooPlot *plot_bC, RooPlot *plot_bS, TH1F *data, TH1F *qcd
   // m_one_line->Draw("same");
   p_1->cd();
   return c;
+
 }
 
 void BackgroundPrediction(std::string pname="antibtag",int rebin_factor=1,int model_number = 6,int imass=760, bool plotBands = false)
@@ -211,7 +214,7 @@ void BackgroundPrediction(std::string pname="antibtag",int rebin_factor=1,int mo
   h_SR_Prediction->Sumw2();
 
   // TODO: is this needed?
-  /*TFile *f_sig = new TFile((dirName+"/w_signal_"+iimass.str()+".root").c_str());
+  /*TFile *f_sig = new TFile((dirName+"/w_signal_"+iimass.str()+".root").c_str()
     RooWorkspace* xf_sig = (RooWorkspace*)f_sig->Get("Vg");
     RooAbsPdf *xf_sig_pdf = (RooAbsPdf *)xf_sig->pdf((std::string("signal_fixed_")+pname).c_str());
 
@@ -259,6 +262,7 @@ void BackgroundPrediction(std::string pname="antibtag",int rebin_factor=1,int mo
     bias_term_s = 2.7*biasFunc->Eval(imass);
     } else {
     bias_term_s = 2.7*biasFunc2->Eval(imass);
+
     }
     bias_term_s/=nEventsSR;
     }
@@ -804,6 +808,7 @@ void BackgroundPrediction(std::string pname="antibtag",int rebin_factor=1,int mo
     c->cd();
     h_mX_SR->Draw();
     c->Print("testX.pdf");
+
     RooWorkspace *w_data=new RooWorkspace("Vg");
     w_data->import(data_obs);
 
