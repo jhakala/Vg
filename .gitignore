@@ -23,3 +23,8 @@ AutoDict*
 *.swp
 .__*
 .nfs*
+*.pdf
+info_*_btag
+info_*_antibtag
+datacard*.txt
+*combo.log

@@ -118,7 +118,7 @@ frame = var.frame()
 backgroundDict     = getPdfFromMultiPdf(wtemplates, multipdf, pdfIndex, options.makePlot, dataRooHist)
 bkgPdfFromMultiPdf = backgroundDict["pdfFromMultiPdf"]
 backgroundWS       = backgroundDict["rooWS"]
-outFileName        = "%s_%s.root" % (backgroundDict["origName"], options.outSuffix)
+outFileName        = "%s_%s_%s.root" % (backgroundDict["origName"], options.outSuffix, options.category)
 outFile = TFile(outFileName, "RECREATE")
 outFile.cd()
 
@@ -131,7 +131,7 @@ if options.altIndex is not None:
   altDict            = getPdfFromMultiPdf(wtemplates, multipdf, int(options.altIndex), options.makePlot, dataRooHist)
   altPdfFromMultiPdf = altDict["pdfFromMultiPdf"]
   altWS              = altDict["rooWS"]
-  altFileName        = "%s_%s.root" % (altDict["origName"], options.outSuffix)
+  altFileName        = "%s_%s_%s.root" % (altDict["origName"], options.outSuffix, options.category)
   altFile = TFile(altFileName, "RECREATE")
   altFile.cd()
   

@@ -12,12 +12,16 @@ for name in ${postfix[@]}
 do
     ./prepArea.sh ${name} ${proc}
     mkdir info_${mass}_${name}
-    cp ../bg_antibtag.root info_${mass}_${name}/bg_antibtag.root
+    rm -f info_${mass}_${name}/bg_${name}.root
+    ln -s /home/hakala/cmssw/CMSSW_7_1_5/src/Vg_1/bg_${name}.root info_${mass}_${name}/bg_${name}.root
     if [ "$proc" == "bias" ]; then
-      cp ../bg_alt_antibtag.root info_${mass}_${name}/bg_alt_antibtag.root
+      rm -f info_780_${name}/bg_alt_${name}.root
+      ln -s /home/hakala/cmssw/CMSSW_7_1_5/src/Vg_1/bg_alt_${name}.root info_${mass}_${name}/bg_alt_${name}.root
     fi
     echo "FROM $PWD"
-    cp ../../dataFiles/w_data_${name}.root info_${mass}_${name}/w_data_${name}.root
+    echo cp ../dataFiles/w_data_${name}.root info_${mass}_${name}/w_data_${name}.root
+    rm -f info_780_${name}/w_data_${name}.root
+    ln -s /home/hakala/cmssw/CMSSW_7_1_5/src/dataFiles/w_data_${name}.root info_${mass}_${name}/w_data_${name}.root
     echo $name
     echo
     echo "root -x -b -l -q Display_SignalFits.cc\(\"${name}\"\,\"../fitFilesBtagSF/\",\"\",\"histos_flatTuple_m\",${mass},${rebin}\) > info_${mass}_${name}/signal${mass}_${name}_sig.log"
