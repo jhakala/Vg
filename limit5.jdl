@@ -1,0 +1,13 @@
+universe = vanilla
+Executable = rlVg5.sh
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT
+Notification = Error
+ 
+arguments = $(Process)
+ 
+Output = condorLogs/log.$(Process).stdout
+Error = condorLogs/log.$(Process).stderr
+Log = condorLogs/log.$(Process).condorlog
+ 
+Queue 336

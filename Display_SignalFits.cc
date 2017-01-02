@@ -82,23 +82,61 @@ RooPlot* fitSignal(std::string dirName, TH1D *h, int massNum, std::string mass, 
     //x=new RooRealVar("x", "m_{X} (GeV)", 600., 3200.);
     
     double massL = double(massNum);
-    double rangeLo=TMath::Max(600., massL-0.3*massL), rangeHi=TMath::Min(3600., massL+0.3*massL);
+    double rangeLo=TMath::Max(700., massL-0.3*massL), rangeHi=TMath::Min(4700., massL+0.3*massL);
     
-    sg_p0=new RooRealVar((std::string("sg_p0")+postfix).c_str(), "sg_p0", massL, massL-0.1*massL, massL+0.1*massL);
-    sg_p1=new RooRealVar((std::string("sg_p1")+postfix).c_str(), "sg_p1", 0.03*massL, 5., 400.);
-    sg_p2=new RooRealVar((std::string("sg_p2")+postfix).c_str(), "sg_p2", 1.3, 0., 200.);
-    sg_p3=new RooRealVar((std::string("sg_p3")+postfix).c_str(), "sg_p3", 5, 0., 300.);
-    sg_p4=new RooRealVar((std::string("sg_p4")+postfix).c_str(), "sg_p4", massL, 500., 800.);
-    sg_p5=new RooRealVar((std::string("sg_p5")+postfix).c_str(), "sg_p5", 150, 0., 3000.);
+    // for antibtag 650-750
+    // original
+    //sg_p2=new RooRealVar((std::string("sg_p2")+postfix).c_str(), "sg_p2", 1.3, 0., 200.);
+    //sg_p3=new RooRealVar((std::string("sg_p3")+postfix).c_str(), "sg_p3", 5, 0., 300.); 
+    // all besides antibtag 650-750
+    //sg_p2=new RooRealVar((std::string("sg_p2")+postfix).c_str(), "sg_p2", 1.3, 0.1, 200.);
+    //sg_p3=new RooRealVar((std::string("sg_p3")+postfix).c_str(), "sg_p3", 5, 0.1, 300.);
     //sg_p6=new RooRealVar((std::string("sg_p6")+postfix).c_str(), "sg_p6", 0.99, 0.,1.);
     if (postfix == "btag") {
-        sg_p6=new RooRealVar((std::string("sg_p6")+postfix).c_str(), "sg_p6", 1., 0.,1.);
-        sg_p6->setConstant(kTRUE);
-    } else {
+      sg_p6=new RooRealVar((std::string("sg_p6")+postfix).c_str(), "sg_p6", 1., 0.,1.);
+      sg_p6->setConstant(kTRUE);
+      sg_p0=new RooRealVar((std::string("sg_p0")+postfix).c_str(), "sg_p0", massL, massL-0.1*massL, massL+0.1*massL);
+      sg_p1=new RooRealVar((std::string("sg_p1")+postfix).c_str(), "sg_p1", 0.03*massL, 5., 400.);
+      if (massL<750) {
+        sg_p2=new RooRealVar((std::string("sg_p2")+postfix).c_str(), "sg_p2", 1.3, 5, 200.);
+        sg_p3=new RooRealVar((std::string("sg_p3")+postfix).c_str(), "sg_p3", 5, 3, 300.);
+      }
+      else {
+        sg_p2=new RooRealVar((std::string("sg_p2")+postfix).c_str(), "sg_p2", 1.3, 0.25, 200.);
+        sg_p3=new RooRealVar((std::string("sg_p3")+postfix).c_str(), "sg_p3", 5, 0.15, 300.);
+      }
+      sg_p4=new RooRealVar((std::string("sg_p4")+postfix).c_str(), "sg_p4", massL, 500., 800.);
+      sg_p5=new RooRealVar((std::string("sg_p5")+postfix).c_str(), "sg_p5", 150, 0., 3000.);
+    } 
+    else {
+        if (massL<750) {
+          sg_p0=new RooRealVar((std::string("sg_p0")+postfix).c_str(), "sg_p0", massL, massL-0.1*massL, massL+0.1*massL);
+          sg_p1=new RooRealVar((std::string("sg_p1")+postfix).c_str(), "sg_p1", 0.03*massL, 5., 400.);
+          sg_p2=new RooRealVar((std::string("sg_p2")+postfix).c_str(), "sg_p2", 1.3, 5, 200.);
+          sg_p3=new RooRealVar((std::string("sg_p3")+postfix).c_str(), "sg_p3", 5, 3, 300.);
+          sg_p4=new RooRealVar((std::string("sg_p4")+postfix).c_str(), "sg_p4", massL, 500., 800.);
+          sg_p5=new RooRealVar((std::string("sg_p5")+postfix).c_str(), "sg_p5", 150, 0., 3000.);
+        }
+        else if (massL > 2850) { 
+          sg_p0=new RooRealVar((std::string("sg_p0")+postfix).c_str(), "sg_p0", massL, massL-0.5*massL, massL+0.1*massL);
+          sg_p1=new RooRealVar((std::string("sg_p1")+postfix).c_str(), "sg_p1", 0.01*massL, 5., 400.); 
+          sg_p2=new RooRealVar((std::string("sg_p2")+postfix).c_str(), "sg_p2", 1.3, 0.25, 200.);
+          sg_p3=new RooRealVar((std::string("sg_p3")+postfix).c_str(), "sg_p3", 5, 0.15, 300.);
+          sg_p4=new RooRealVar((std::string("sg_p4")+postfix).c_str(), "sg_p4", massL-0.5*massL, 500., 800.);
+          sg_p5=new RooRealVar((std::string("sg_p5")+postfix).c_str(), "sg_p5", 100, 0., 3000.);
+        }
+        else {
+          sg_p0=new RooRealVar((std::string("sg_p0")+postfix).c_str(), "sg_p0", massL, massL-0.1*massL, massL+0.1*massL);
+          sg_p1=new RooRealVar((std::string("sg_p1")+postfix).c_str(), "sg_p1", 0.03*massL, 5., 400.);
+          sg_p2=new RooRealVar((std::string("sg_p2")+postfix).c_str(), "sg_p2", 1.3, 0.25, 200.);
+          sg_p3=new RooRealVar((std::string("sg_p3")+postfix).c_str(), "sg_p3", 5, 0.15, 300.);
+          sg_p4=new RooRealVar((std::string("sg_p4")+postfix).c_str(), "sg_p4", massL, 500., 800.);
+          sg_p5=new RooRealVar((std::string("sg_p5")+postfix).c_str(), "sg_p5", 150, 0., 3000.);
+        }
         sg_p6=new RooRealVar((std::string("sg_p6")+postfix).c_str(), "sg_p6", 0.99, 0.,1.);
     }
     
-    x=new RooRealVar("x", "m_{X} (GeV)", 600., 3600.);
+    x=new RooRealVar("x", "m_{X} (GeV)", 700., 4700.);
     RooCBShape signalCore((std::string("signalCore")+postfix).c_str(), "signalCore", *x, *sg_p0, *sg_p1,*sg_p2, *sg_p3);
     RooGaussian signalComb((std::string("signalComb")+postfix).c_str(), "Combinatoric", *x, *sg_p0, *sg_p5);
     RooAddPdf signal((std::string("signal")+postfix).c_str(), "signal", RooArgList(signalCore, signalComb), *sg_p6);
@@ -165,14 +203,16 @@ int Display_SignalFits(std::string postfix,
                        //std::string file_histograms="histos_signal-",
                        std::string file_histograms="histos_flatTuple_m",
                        int imass=650,
-                       int rebin_factor = 10,
+                       int rebin_factor = 1,
+
                        bool focus=false)
 {
     
     
     writeExtraText = true;       // if extra text
     extraText  = "Simulation";  // default extra text is "Preliminary"
-    lumi_13TeV  = "27.22 fb^{-1}"; // default is "19.7 fb^{-1}"
+    lumi_13TeV  = "36.42 fb^{-1}"; // default is "19.7 fb^{-1}"
+
     
     rebin = rebin_factor;
     
@@ -195,7 +235,8 @@ int Display_SignalFits(std::string postfix,
     setTDRStyle();
     
     // Calculate nSignal events given production cross section, branching fractions and efficiency
-    double totalLumi=27.22; // /fb
+    double totalLumi=36.42; // /fb
+
     //double prodXsec_1=1; // fb
     
     // Interpolation Plots
@@ -297,9 +338,10 @@ int Display_SignalFits(std::string postfix,
         
         leg->AddEntry(h_mX_SR, "Signal MC");
         Params params_vg;
-        h_mX_SR->Scale(27220.0);
+        h_mX_SR->Scale(36420.0);
         RooPlot *plot_vg=fitSignal(dirName,h_mX_SR, imass, masses.at(i), kBlack, leg, params_vg,postfix, true);
-        h_mX_SR->Scale(1.0/27220.0);
+        h_mX_SR->Scale(1.0/36420.0);
+
         v_sg_p0.push_back(params_vg.sg_p0); v_sg_p0_err.push_back(params_vg.sg_p0_err);
         v_sg_p1.push_back(params_vg.sg_p1); v_sg_p1_err.push_back(params_vg.sg_p1_err);
         v_sg_p2.push_back(params_vg.sg_p2); v_sg_p2_err.push_back(params_vg.sg_p2_err);
@@ -345,7 +387,8 @@ int Display_SignalFits(std::string postfix,
         p_2->cd();
         RooHist* hpull;
         hpull = plot_vg->pullHist();
-        RooRealVar* x=new RooRealVar("x", "m_{X} (GeV)", 600, 3500);
+        RooRealVar* x=new RooRealVar("x", "m_{X} (GeV)", 700, 4700);
+        x->setBins(4000);
 
         RooPlot* frameP = x->frame() ;
         frameP->SetTitle("");

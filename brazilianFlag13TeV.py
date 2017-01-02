@@ -10,7 +10,8 @@ if not (argv[1] == "btag" or argv[1] == "antibtag" or argv[1] == "combined"):
 tdrstyle.setTDRStyle()
 
 #change the CMS_lumi variables (see CMS_lumi.py)
-CMS_lumi.lumi_13TeV = "27.22 fb^{-1}"
+CMS_lumi.lumi_13TeV = "36.42 fb^{-1}"
+
 CMS_lumi.writeExtraText = 1
 CMS_lumi.extraText = "Preliminary"
 CMS_lumi.lumi_sqrtS = "13 TeV" # used with iPeriod = 0, e.g. for simulation-only plots (default is an empty string)
@@ -30,10 +31,12 @@ gStyle.SetPadTopMargin(0.06)
 def Plot(files, label, obs, cat):
 
     radmasses = []
-    imass=650
     for f in files:
-        radmasses.append(imass)
-        imass=imass+10
+        radmasses.append(int(f.GetName().replace("higgsCombineTest.Asymptotic.mH", "").replace(".root","")))
+    print "files is:"
+    print files
+    print "radmasses is:" 
+
     print radmasses
     #radmasses = [750, 850, 1000, 1150, 1750, 2050, 2450, 3250]
 
@@ -43,29 +46,36 @@ def Plot(files, label, obs, cat):
 
     fChain = []
     for onefile in files:
-        print onefile
-        fileIN = rt.TFile.Open(onefile)
-        fChain.append(fileIN.Get("limit;1"))  
+        print "for fchain[%i]: %s " % (len(fChain), onefile.GetName())
+        #fileIN = TFile(onefile)
+        fChain.append(onefile.Get("limit;1"))  
+        print "fchain[%i]: %s" % (len(fChain)-1, fChain[-1])
 
         rt.gROOT.ProcessLine("struct limit_t {Double_t limit;};")
         from ROOT import limit_t
-        limit_branch = limit_t()
+        limit_branch = rt.limit_t()
 
         for j in range(0,len(fChain)):
             chain = fChain[j]
+            print "Setting branch address for: fChain[%i]" % j
             chain.SetBranchAddress("limit", rt.AddressOf(limit_branch,'limit'))
+    print "done setting branch addresses."
 
     rad = []
     for j in range(0,len(fChain)):
+        print "working on fchain[%i]" % j
         chain = fChain[j]
         thisrad = []
         for  i in range(0,6):
+            print "in loop over limit %i" % i
+            print chain.GetTree()
+            print "about to get entry... "
             chain.GetTree().GetEntry(i)
             thisrad.append(limit_branch.limit)
             #print "limit = %f" %limit_branch.limit
         #print thisrad
         rad.append(thisrad)
-
+    print "   >>> done getting all the files. About to make plot..."
 
     # we do a plot r*MR
     mg = rt.TMultiGraph()
@@ -205,7 +215,8 @@ def Plot(files, label, obs, cat):
     CMS_lumi.CMS_lumi(c1, iPeriod, iPos)
     c1.cd()
     c1.Update()
-
+    
+    print "   >>> Done drawing plots. About to save plots..."
 
     if withAcceptance:
         c1.SaveAs("brazilianFlag_acc_%s_13TeV.root" %argv[1])
@@ -224,11 +235,12 @@ if __name__ == '__main__':
 
   for chan in channels:
     print "chan =",chan
-    imass=650
+    imass=700
     masses=[]
-    while imass < 3226:
+    while imass < 3251:
         masses.append(imass)
-        imass+=10
+        imass+=40
+
     ##masses =[650, 740, 745, 750, 755, 760, 765, 850, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2450, 3000, 3250]
     #masses = [750, 850, 1000, 1150, 1750, 2050, 2450, 3250]
 
@@ -236,6 +248,7 @@ if __name__ == '__main__':
     LPplots=[]
     combinedplots=[]
     for mass in masses:
-       HPplots+=["higgsCombineTest.Asymptotic.mH"+str(mass)+".root"]
+       HPplots+=[rt.TFile("higgsCombineTest.Asymptotic.mH"+str(mass)+".root")]
+       print "added HPplot %s" % HPplots[-1]
 
     Plot(HPplots,chan+"_Hgamma", unblind, argv[1])

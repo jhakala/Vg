@@ -26,11 +26,11 @@ void drawBias () {
     Color_t cols[nDirs] = {kBlack, kRed+1, kOrange-3, kGreen+1, kAzure+7 , kMagenta};
     
     
-    TString dirNames[nDirs] = {"exp1","expow2","pow1","lau1","atlas1","vvdijet1"};
+    TString dirNames[nDirs] = {"exp1","expow1","pow1","lau1","atlas1","vvdijet1"};
     
     
-    //TODO
-    const int nPoints = 4;//46;
+    const int nPoints = 111;//46;
+
     TCanvas* c1[nDirs][nPoints];
     TFile * f[nDirs][nPoints];
     TTree* tree_fit_sb[nDirs][nPoints];
@@ -59,8 +59,12 @@ void drawBias () {
         biasG[dd] = new TGraphErrors(nPoints);
         biasG2[dd] = new TGraphErrors(nPoints);
         biasG[dd]->SetMarkerColor(cols[dd]);
+        biasG[dd]->SetMarkerStyle(20);
+        biasG[dd]->SetMarkerSize(.3);
         biasG[dd]->SetLineColor(cols[dd]);
         biasG2[dd]->SetMarkerColor(cols[dd]);
+        biasG[dd]->SetMarkerStyle(20);
+        biasG[dd]->SetMarkerSize(.3);
         biasG2[dd]->SetLineColor(cols[dd]);
         
         

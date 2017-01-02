@@ -7,17 +7,21 @@ function show_help {
 #masses=(
 #      1000
 #)
-
+#prepare for interpolation:
 #masses=(
 #    650 750 850 1000 1150 1300 1450 1600 1750 1900 2050 2450 2850 3250
 #)
-#masses=( 750 1000 1500 2000 3000 )
+#masses=( 650 750 )
 #masses=( `i="650"; while [ $i -lt 3251 ]; do echo $i; i=$[$i + 10]; done | xargs` )
+#masses=(
+#    650 750 850 1000 1150 1300 1450 1600 1750 1900 2050 2450 2850 3250
+#)
 
+#batch:
 masses=( `echo $1` )
 
 cleanUp=0
-rebin=20
+rebin=1
 debug=0
 
 while getopts "h?cr:d" opt; do
@@ -40,7 +44,10 @@ done
 for m in ${masses[@]}
 do
     if [ $cleanUp -eq 0 ]; then
-        ./buildInputs.sh $rebin $m $2
+        #BATCH:
+        ./buildInputs.sh $rebin $m limit
+        #prepare for interpolation
+
         #./buildInputs.sh $rebin $m $1
         ./buildDatacards.sh $m
         ./runLimits.sh $debug $m

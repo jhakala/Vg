@@ -16,9 +16,9 @@ do
     echo building datacard for $name
     dirName="info_${mass}_${name}"
     dcardName="datacard_${mass}_${name}.txt"
-    bgLogName="data_${name}_bkg.log"
+    #bgLogName="data_${name}_bkg.log"
     sig_norm=`grep 'norm =' ${dirName}/index.html | awk '{print $3}'`    
-    bkg_norm=`grep ' Background number of events = ' ${dirName}/${bgLogName} | awk '{print $6}'`
+    #bkg_norm=`grep ' Background number of events = ' ${dirName}/${bgLogName} | awk '{print $6}'`
     
     #let's build a datacard!
     cat > ${dirName}/${dcardName} <<EOF
@@ -27,8 +27,8 @@ jmax * number of backgrounds
 kmax * number of systematic uncertainty sources
 ----------
 shapes signal     Vg w_signal_${mass}.root      Vg:signal_fixed_${name}
-shapes background Vg w_background_GaussExp.root Vg:bg_${name}
-shapes data_obs   Vg w_data.root                Vg:data_obs
+shapes background Vg bg_${name}.root            Vg:bg_${name}
+shapes data_obs   Vg w_data_${name}.root        Vg:data_obs
 ----------
 ## Observation
 bin                     Vg
@@ -52,7 +52,6 @@ EOF
     
     #now add the systematics to the card
     #grep 'signal_' ${dirName}/index.html | awk '{print $1 " " $2 " " $3 " " $4}' >>  ${dirName}/${dcardName}
-    #grep 'bias_term_' ${dirName}/${bgLogName} | grep ' param ' >> ${dirName}/${dcardName}
     #grep 'bg_' ${dirName}/${bgLogName} | grep 'param' >> ${dirName}/${dcardName}
     if [[ $dcardName == *"anti"* ]]
     then
@@ -62,7 +61,6 @@ EOF
 	fi
 	sed -i 's/WHATKIND/Anti/' ${dirName}/${dcardName}
 	sed -i '/cms_btag_sf_13TeV.*'${btagSys}'.*/d' ${dirName}/${dcardName}
-	#grep 'bg_' ${dirName}/${bgLogName} | grep ' param ' >> ${dirName}/${dcardName}
     else
         if [[ ${mass} -gt 3800 ]]
         then
@@ -70,7 +68,6 @@ EOF
         fi
 	sed -i 's/WHATKIND//' ${dirName}/${dcardName}
 	sed -i '/cms_btag_sf_13TeV.*'${antibtagSys}'.*/d' ${dirName}/${dcardName}
-        #grep 'bg_' ${dirName}/${bgLogName} | grep 'param' >> ${dirName}/${dcardName}
     fi
 
     cards+="${dirName}/${dcardName} "
