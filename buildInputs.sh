@@ -13,10 +13,10 @@ do
     ./prepArea.sh ${name} ${proc}
     mkdir info_${mass}_${name}
     rm -f info_${mass}_${name}/bg_${name}.root
-    ln -s /home/hakala/cmssw/CMSSW_7_1_5/src/Vg_1/bg_${name}.root info_${mass}_${name}/bg_${name}.root
+    ln -s $PWD/bg_${name}.root info_${mass}_${name}/bg_${name}.root
     if [ "$proc" == "bias" ]; then
       rm -f info_780_${name}/bg_alt_${name}.root
-      ln -s /home/hakala/cmssw/CMSSW_7_1_5/src/Vg_1/bg_alt_${name}.root info_${mass}_${name}/bg_alt_${name}.root
+      ln -s $PWD/bg_alt_${name}.root info_${mass}_${name}/bg_alt_${name}.root
     fi
     echo "FROM $PWD"
     echo cp ../dataFiles/w_data_${name}.root info_${mass}_${name}/w_data_${name}.root
