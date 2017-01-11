@@ -2,7 +2,7 @@
 cleanUp=0
 rebin=1
 debug=0
-nToys=500
+nToys=50
 m=$1
 #model=$2
 
@@ -30,15 +30,18 @@ do
     dirName="info_${m}_${name}"
     dcardName="datacard_${m}_${name}.txt"
     dcardNameAlt="datacard_${m}_${name}_alt.txt"
-    combine ${dirName}/${dcardNameAlt} -M GenerateOnly -m $m -t $nToys  --saveToys -s $seeds --expectSignal=0.0 -n biasTest
-    combine ${dirName}/${dcardName} -M MaxLikelihoodFit -m $m --expectSignal=0.0  --rMin=-100000 --rMax=100000 -t $nToys --toysFile=higgsCombinebiasTest.GenerateOnly.mH${m}.${seeds}.root -s $seeds -n output${m}_${name}
-    seeds=123321
+    #combine ${dirName}/${dcardNameAlt} -M GenerateOnly -m $m -t $nToys  --saveToys -s $seeds --expectSignal=0.0 -n biasTest
+    #combine ${dirName}/${dcardName} -M MaxLikelihoodFit -m $m --expectSignal=0.0  --rMin=-100000 --rMax=100000 -t $nToys --toysFile=higgsCombinebiasTest.GenerateOnly.mH${m}.${seeds}.root -s $seeds -n output${m}_${name}
+    cd $dirName
+    combine datacard_qqg_${m}_combined_alt.txt -M GenerateOnly -m $m -t $nToys  --saveToys -s 123321 --expectSignal=0.0 -n biasTest 
+    combine datacard_qqg_${m}_combined.txt -M MaxLikelihoodFit -m $m --expectSignal=0.0 --rMin=-10000 --rMax=10000 -t $nToys --toysFile=higgsCombinebiasTest.GenerateOnly.mH${m}.123321.root -s 123321 --toysFrequentist --minos none -n output${m} 
+    cd ..
 done
 
-combine datacard_qqg_${m}_combined_alt.txt -M GenerateOnly -m $m -t $nToys  --saveToys -s 123321 --expectSignal=0.0 -n biasTest 
+#combine datacard_qqg_${m}_combined_alt.txt -M GenerateOnly -m $m -t $nToys  --saveToys -s 123321 --expectSignal=0.0 -n biasTest 
 #combine datacard_qqg_${m}_combined_alt.txt -M GenerateOnly -m $m -t $nToys  --saveToys -s 123321 --expectSignal=0.0 -n biasTest 
 
 #combine datacard_qqg_${m}_combined.txt -M MaxLikelihoodFit -m $m --expectSignal=0.0 --rMin=-10000 --rMax=10000 -t $nToys --toysFile=higgsCombinebiasTest.GenerateOnly.mH${m}.123321.root -s 123321 --toysFrequentist --noErrors --minos none -n output${m} --saveShapes --saveWithUncertainties --out plotDir_new --plots
-combine datacard_qqg_${m}_combined.txt -M MaxLikelihoodFit -m $m --expectSignal=0.0 --rMin=-10000 --rMax=10000 -t $nToys --toysFile=higgsCombinebiasTest.GenerateOnly.mH${m}.123321.root -s 123321 --toysFrequentist --noErrors --minos none -n output${m} 
+#combine datacard_qqg_${m}_combined.txt -M MaxLikelihoodFit -m $m --expectSignal=0.0 --rMin=-10000 --rMax=10000 -t $nToys --toysFile=higgsCombinebiasTest.GenerateOnly.mH${m}.123321.root -s 123321 --toysFrequentist --minos none -n output${m} 
 
 #combine datacard_qqg_${m}_combined.txt -M MaxLikelihoodFit -m $m --expectSignal=0.0 --rMin=-10000 --rMax=10000 -t $nToys --toysFile=higgsCombinebiasTest.GenerateOnly.mH${m}.123321.root -s 123321 --toysFrequentist --noErrors --minos none -n output${m}

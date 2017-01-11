@@ -70,8 +70,13 @@ EOF
 	sed -i '/cms_btag_sf_13TeV.*'${antibtagSys}'.*/d' ${dirName}/${dcardName}
     fi
 
-    cards+="${dirName}/${dcardName} "
+    cards+="${dcardName} "
 done
 
-combineCards.py -S $cards > datacard_qqg_${mass}_combined.txt
-
+for name in ${postfix[@]}
+do
+    dirName="info_${mass}_${name}"
+    cd $dirName
+    combineCards.py -S $cards > datacard_qqg_${mass}_combined.txt
+    cd ..
+done
