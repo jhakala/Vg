@@ -2,7 +2,7 @@
 cleanUp=0
 rebin=1
 debug=0
-nToys=50
+nToys=500
 m=$1
 #model=$2
 
