@@ -33,6 +33,8 @@ parser.add_option("-d", action="store_true", dest="linkData" , default=False,
 (options, args) = parser.parse_args()
 if options.outSuffix is None:
   parser.error("output histogram filename not given")
+if options.category is None:
+  parser.error("please specify 'btag' or 'antibtag' as the -c option")
 
 dataLinkName = "w_data_%s.root" % options.category
 if options.linkData:
@@ -46,6 +48,7 @@ def getPdfFromMultiPdf(inWorkspace, multiPdf, multiPdfIndex, makePlot, rooHistDa
   rooWS = RooWorkspace("Vg")
   pdfFromMultiPdf = multiPdf.getPdf(int(multiPdfIndex))
   origName = pdfFromMultiPdf.GetName()
+  print " --->origName: %s" % origName 
   pdfFromMultiPdf.SetName("bg_%s" % options.category)
   
   nBackground=RooRealVar("bg_%s_norm" % options.category, "nbkg", rooHistData.sumEntries())
@@ -115,6 +118,7 @@ else:
 var = wtemplates.var("x")
 frame = var.frame()
 
+print "about to get background model:"
 backgroundDict     = getPdfFromMultiPdf(wtemplates, multipdf, pdfIndex, options.makePlot, dataRooHist)
 bkgPdfFromMultiPdf = backgroundDict["pdfFromMultiPdf"]
 backgroundWS       = backgroundDict["rooWS"]
@@ -128,6 +132,7 @@ if options.makeLink:
   force_symlink(outFileName, bkgLinkName)
 
 if options.altIndex is not None:
+  print "about to get alternate background model:"
   altDict            = getPdfFromMultiPdf(wtemplates, multipdf, int(options.altIndex), options.makePlot, dataRooHist)
   altPdfFromMultiPdf = altDict["pdfFromMultiPdf"]
   altWS              = altDict["rooWS"]
