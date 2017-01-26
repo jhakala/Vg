@@ -29,7 +29,8 @@ void drawBias () {
     TString dirNames[nDirs] = {"exp1","expow1","pow1","lau1","atlas1","vvdijet1"};
     
     
-    const int nPoints = 111;//46;
+    const int nPoints = 68;//46;
+    //const int nPoints = 5;//46;
     TCanvas* c1[nDirs][nPoints];
     TFile * f[nDirs][nPoints];
     TTree* tree_fit_sb[nDirs][nPoints];
@@ -62,8 +63,8 @@ void drawBias () {
         biasG[dd]->SetMarkerSize(.3);
         biasG[dd]->SetLineColor(cols[dd]);
         biasG2[dd]->SetMarkerColor(cols[dd]);
-        biasG[dd]->SetMarkerStyle(20);
-        biasG[dd]->SetMarkerSize(.3);
+        biasG2[dd]->SetMarkerStyle(20);
+        biasG2[dd]->SetMarkerSize(.3);
         biasG2[dd]->SetLineColor(cols[dd]);
         
         
@@ -78,10 +79,11 @@ void drawBias () {
             std::cout<< "dirNames[dd]: " << dirNames[dd] << std::endl ;
             //if (650+i*100 == 1750) continue;
             //std::printf("\nForm... =  /mlfitoutput%d.root\n", masses[i]);
-            int mass = 650+30*i;
+            int mass = 730+30*i;
             //TString nameF = dirNames[dd]+Form("/mlfitoutput%d.root",masses[i]);
             //TString nameF = Form("./mlfitoutput%d.root",masses[i]);
             TString nameF = dirNames[dd]+Form("/mlfitoutput%d.root",mass);
+            //TString nameF = dirNames[dd]+Form("/mlfitoutput%d_btag.root",mass);
             if (gSystem->AccessPathName(nameF)) continue;
             c1[dd][i] = new TCanvas(Form("c_%d_%d",dd,i),Form("c_%d_%d",dd,i), 700, 700);
             f[dd][i] = new TFile(nameF);
@@ -115,6 +117,7 @@ void drawBias () {
             
             //biasG[dd]->SetPoint(i,masses[i],hists[dd][i]->GetFunction("gaus")->GetParameter(1));
             biasG[dd]->SetPoint(i,mass,hists[dd][i]->GetFunction("gaus")->GetParameter(1));
+            std::cout << "for model " << dd << ", setting point " << i << " to (" << hists[dd][i]->GetFunction("gaus")->GetParameter(1) << ", " << mass << ")" << std::endl;
             biasG[dd]->SetPointError(i,0,hists[dd][i]->GetFunction("gaus")->GetParError(1));
             
             hists[dd][i]->GetQuantiles(1,&quantile,&prob);
