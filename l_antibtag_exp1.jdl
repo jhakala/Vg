@@ -1,5 +1,5 @@
 universe = vanilla
-Executable = rlVg1.sh
+Executable = l_antibtag_exp1.sh
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
 Notification = Error
@@ -10,4 +10,4 @@ Output =log.$(Process).stdout
 Error = log.$(Process)..stderr
 Log = log.$(Process).condorlog
  
-Queue 260
+Queue 255

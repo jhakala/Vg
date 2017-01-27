@@ -222,7 +222,7 @@ int Display_SignalFits(std::string postfix,
     iimass << imass;
     masses.push_back(iimass.str());
     
-    std::string dirName = "info_"+masses.at(0)+"_"+postfix;
+    std::string dirName = "signalFits_"+postfix;
     
     std::string file_postfix = std::string(".root");
     std::cout<< " file input "<< file_postfix<<std::endl;
@@ -249,7 +249,8 @@ int Display_SignalFits(std::string postfix,
     std::vector<double> v_sg_p6, v_sg_p6_err;
     
     // Write to an HTML File
-    outfile.open((dirName+"/index.html").c_str());
+    // outfile.open((dirName+"/index.html").c_str());
+     outfile.open((dirName+"/fit_" + std::to_string(imass) + ".html").c_str());
     outfile<<"<html>"<<std::endl;
     outfile<<"<head>"<<std::endl;
     outfile<<"<script type=\"text/javascript\">"<<std::endl;
