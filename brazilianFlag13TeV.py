@@ -1,4 +1,3 @@
-import CMS_lumi, tdrstyle
 from sys import argv
 from getMasses import getMasses
 from optparse import OptionParser
@@ -153,18 +152,8 @@ def Plot(files, label, obs, cat, inDir):
     gtheory.SetLineColor(rt.kBlack)
     gtheory.SetLineWidth(4)
 
-    if "WW" in label.split("_")[0] or "ZZ" in label.split("_")[0]:
-       leg = rt.TLegend(0.5,0.7,0.95,0.89)
-       leg2 = rt.TLegend(0.33,0.55,0.95,0.89)
-    else:
-        if argv[1] == "btag":
-          cat = ": btag category"
-        if argv[1] == "antibtag":
-          cat = ": antibtag category"
-        if argv[1] == "combined":
-          cat = ""
-        leg = rt.TLegend(0.5,0.65,0.95,0.89,"H(b#bar{b})#gamma%s"%cat)
-        leg2 = rt.TLegend(0.49,0.55,0.95,0.89)
+    leg = rt.TLegend(0.5,0.65,0.95,0.89,"H(b#bar{b})#gamma: %s category" % cat)
+    leg2 = rt.TLegend(0.49,0.55,0.95,0.89)
     leg.SetFillColor(rt.kWhite)
     leg.SetFillStyle(0)
     leg.SetTextSize(0.04)
@@ -196,13 +185,13 @@ def Plot(files, label, obs, cat, inDir):
     print "   >>> Done drawing plots. About to save plots..."
 
     if withAcceptance:
-        c1.SaveAs("brazilianFlag_acc_%s_%s_13TeV.root" % (options.category, options.inDir))
-        c1.SaveAs("brazilianFlag_acc_%s_%s_13TeV.pdf" % (options.category, options.inDir))
+        c1.SaveAs("brazilianFlag_acc_%s_%s_13TeV.root" % (cat, inDir))
+        c1.SaveAs("brazilianFlag_acc_%s_%s_13TeV.pdf" % (cat, inDir))
     else:
-        c1.SaveAs("brazilianFlag_%s_%s_13TeV.root" % (options.category, options.inDir))
-        c1.SaveAs("brazilianFlag_%s_%s_13TeV.pdf" % (options.category, options.inDir))
-        grobs.SaveAs("brazilianFlag_observed_%s_%s_13TeV.root" % (options.category, options.inDir))
-        grmean.SaveAs("brazilianFlag_expected_%s_%s_13TeV.root" % (options.category, options.inDir))
+        c1.SaveAs("brazilianFlag_%s_%s_13TeV.root" % (cat, inDir))
+        c1.SaveAs("brazilianFlag_%s_%s_13TeV.pdf" % (cat, inDir))
+        grobs.SaveAs("brazilianFlag_observed_%s_%s_13TeV.root" % (cat, inDir))
+        grmean.SaveAs("brazilianFlag_expected_%s_%s_13TeV.root" % (cat, inDir))
 
 
 if __name__ == '__main__':
@@ -210,8 +199,6 @@ if __name__ == '__main__':
   parser = OptionParser()
   parser.add_option("-i", "--inDir", dest="inDir",
                     help = "the input directory"                                    )
-  parser.add_option("-c", "--category", dest="category",
-                    help = "the category: either 'btag','antibtag', or 'combined'"  ) 
   parser.add_option("-b", action="store_true", dest="batch"     , default=False,
                     help = "turn on batch mode"                                     )
   (options, args) = parser.parse_args()
@@ -222,8 +209,15 @@ if __name__ == '__main__':
   if not path.exists(options.inDir):
     print "invalid input directory given: %s" % options.inDir
     exit(1)
-  if not options.category in ["antibtag", "btag", "combined"]:
-    print "Please pick btag, antibtag, or combined."
+  category = "not found!"
+  if "_antibtag_" in options.inDir:
+    category = "antibtag"
+  if "_btag_" in options.inDir:
+    category = "btag"
+  if "_combined_" in options.inDir:
+    category = "combined"
+  if not category in ["antibtag", "btag", "combined"]:
+    print "Please pick an input directory that specifies the category: either 'btag', 'antibtag', or 'combined'."
     exit(1)
   
   
@@ -232,6 +226,7 @@ if __name__ == '__main__':
   if options.batch:
     gROOT.SetBatch()
   #set the tdr style
+  import CMS_lumi, tdrstyle
   tdrstyle.setTDRStyle()
   
   #change the CMS_lumi variables (see CMS_lumi.py)
@@ -253,17 +248,14 @@ if __name__ == '__main__':
   gStyle.SetPadRightMargin(0.06)
   gStyle.SetPadTopMargin(0.06)
   #channels=["RS1WW","RS1ZZ","WZ","qW","qZ","BulkWW","BulkZZ"]
-  channels=["combined"]
 
-  for chan in channels:
-    print "chan =",chan
-    masses=getMasses()
+  masses=getMasses()
 
-    HPplots=[]
-    LPplots=[]
-    combinedplots=[]
-    for mass in masses:
-       HPplots+=[rt.TFile(path.join(options.inDir, "higgsCombineTest.Asymptotic.mH"+str(mass)+".root"))]
-       print "added HPplot %s" % HPplots[-1]
+  HPplots=[]
+  LPplots=[]
+  combinedplots=[]
+  for mass in masses:
+     HPplots+=[rt.TFile(path.join(options.inDir, "higgsCombineTest.Asymptotic.mH"+str(mass)+".root"))]
+     print "added HPplot %s" % HPplots[-1]
 
-    Plot(HPplots,chan+"_Hgamma", unblind, options.category, options.inDir)
+  Plot(HPplots,category+"_Hgamma", unblind, category, options.inDir)
