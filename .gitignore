@@ -23,3 +23,11 @@ AutoDict*
 *.swp
 .__*
 .nfs*
+*.pdf
+datacards_btag_*
+datacards_antibtag_*
+datacards_combined_*
+condorFactory.py
+gofCondor
+signalFits_btag
+signalFits_antibtag
