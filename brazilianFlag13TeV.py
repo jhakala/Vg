@@ -1,38 +1,15 @@
-import ROOT as rt
-from ROOT import *
 import CMS_lumi, tdrstyle
 from sys import argv
-
-if not (argv[1] == "btag" or argv[1] == "antibtag" or argv[1] == "combined"):
-  print "Please pick btag, antibtag, or combined."
-  quit()
-#set the tdr style
-tdrstyle.setTDRStyle()
-
-#change the CMS_lumi variables (see CMS_lumi.py)
-CMS_lumi.lumi_13TeV = "36.42 fb^{-1}"
-
-CMS_lumi.writeExtraText = 1
-CMS_lumi.extraText = "Preliminary"
-CMS_lumi.lumi_sqrtS = "13 TeV" # used with iPeriod = 0, e.g. for simulation-only plots (default is an empty string)
-
-iPos = 0
-if( iPos==0 ): CMS_lumi.relPosX = 0.12
-
-iPeriod =4
+from getMasses import getMasses
+from optparse import OptionParser
+from os import path
 
 
-withAcceptance=False
-unblind=True
-
-gStyle.SetPadRightMargin(0.06)
-gStyle.SetPadTopMargin(0.06)
-
-def Plot(files, label, obs, cat):
+def Plot(files, label, obs, cat, inDir):
 
     radmasses = []
     for f in files:
-        radmasses.append(int(f.GetName().replace("higgsCombineTest.Asymptotic.mH", "").replace(".root","")))
+        radmasses.append(int(f.GetName().replace("higgsCombineTest.Asymptotic.mH", "").replace(".root","").replace("%s/"%inDir, "")))
     print "files is:"
     print files
     print "radmasses is:" 
@@ -219,36 +196,74 @@ def Plot(files, label, obs, cat):
     print "   >>> Done drawing plots. About to save plots..."
 
     if withAcceptance:
-        c1.SaveAs("brazilianFlag_acc_%s_13TeV.root" %argv[1])
-        c1.SaveAs("brazilianFlag_acc_%s_13TeV.pdf" %argv[1])
+        c1.SaveAs("brazilianFlag_acc_%s_%s_13TeV.root" % (options.category, options.inDir))
+        c1.SaveAs("brazilianFlag_acc_%s_%s_13TeV.pdf" % (options.category, options.inDir))
     else:
-        c1.SaveAs("brazilianFlag_%s_13TeV.root" %argv[1])
-        c1.SaveAs("brazilianFlag_%s_13TeV.pdf" %argv[1])
-        grobs.SaveAs("brazilianFlag_observed_%s_13TeV.root" %argv[1])
-        grmean.SaveAs("brazilianFlag_expected_%s_13TeV.root" %argv[1])
+        c1.SaveAs("brazilianFlag_%s_%s_13TeV.root" % (options.category, options.inDir))
+        c1.SaveAs("brazilianFlag_%s_%s_13TeV.pdf" % (options.category, options.inDir))
+        grobs.SaveAs("brazilianFlag_observed_%s_%s_13TeV.root" % (options.category, options.inDir))
+        grmean.SaveAs("brazilianFlag_expected_%s_%s_13TeV.root" % (options.category, options.inDir))
 
 
 if __name__ == '__main__':
 
+  parser = OptionParser()
+  parser.add_option("-i", "--inDir", dest="inDir",
+                    help = "the input directory"                                    )
+  parser.add_option("-c", "--category", dest="category",
+                    help = "the category: either 'btag','antibtag', or 'combined'"  ) 
+  parser.add_option("-b", action="store_true", dest="batch"     , default=False,
+                    help = "turn on batch mode"                                     )
+  (options, args) = parser.parse_args()
+  
+  if options.inDir is None:
+    print "please supply a valid input directory with the -i option"
+    exit(1)
+  if not path.exists(options.inDir):
+    print "invalid input directory given: %s" % options.inDir
+    exit(1)
+  if not options.category in ["antibtag", "btag", "combined"]:
+    print "Please pick btag, antibtag, or combined."
+    exit(1)
+  
+  
+  import ROOT as rt
+  from ROOT import *
+  if options.batch:
+    gROOT.SetBatch()
+  #set the tdr style
+  tdrstyle.setTDRStyle()
+  
+  #change the CMS_lumi variables (see CMS_lumi.py)
+  CMS_lumi.lumi_13TeV = "36.42 fb^{-1}"
+  
+  CMS_lumi.writeExtraText = 1
+  CMS_lumi.extraText = "Preliminary"
+  CMS_lumi.lumi_sqrtS = "13 TeV" # used with iPeriod = 0, e.g. for simulation-only plots (default is an empty string)
+  
+  iPos = 0
+  if( iPos==0 ): CMS_lumi.relPosX = 0.12
+  
+  iPeriod =4
+  
+  
+  withAcceptance=False
+  unblind=True
+  
+  gStyle.SetPadRightMargin(0.06)
+  gStyle.SetPadTopMargin(0.06)
   #channels=["RS1WW","RS1ZZ","WZ","qW","qZ","BulkWW","BulkZZ"]
   channels=["combined"]
 
   for chan in channels:
     print "chan =",chan
-    imass=700
-    masses=[]
-    while imass < 3251:
-        masses.append(imass)
-        imass+=40
-
-    ##masses =[650, 740, 745, 750, 755, 760, 765, 850, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2450, 3000, 3250]
-    #masses = [750, 850, 1000, 1150, 1750, 2050, 2450, 3250]
+    masses=getMasses()
 
     HPplots=[]
     LPplots=[]
     combinedplots=[]
     for mass in masses:
-       HPplots+=[rt.TFile("higgsCombineTest.Asymptotic.mH"+str(mass)+".root")]
+       HPplots+=[rt.TFile(path.join(options.inDir, "higgsCombineTest.Asymptotic.mH"+str(mass)+".root"))]
        print "added HPplot %s" % HPplots[-1]
 
-    Plot(HPplots,chan+"_Hgamma", unblind, argv[1])
+    Plot(HPplots,chan+"_Hgamma", unblind, options.category, options.inDir)

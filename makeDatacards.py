@@ -1,13 +1,31 @@
-from os import path, makedirs
+from os import path, chmod, makedirs
 from optparse import OptionParser
+from modelNames import getGoodModelNames
+from condorFactory import *
+from getMasses import getMasses
 
+def makeScript(dCardName, outDir, mass):
+  incantation = "combine -M Asymptotic -m %i %s" % (mass, dCardName)
+  pName = "asymp_%s" % dCardName
+  pName = pName.replace(".txt","").replace("datacard_", "")
+  scriptName = "%s/combine_%s.sh" % (outDir, pName)
+  jdlName    = "%s/condor_%s.jdl" % (outDir, pName)
+  script = open(scriptName, "w")
+  script.write(simpleScript(incantation, "%s/%s" % (path.dirname(path.realpath(__file__)), outDir)))
+  chmod(script.name, 0o777)
+  jdl = open(jdlName, "w")
+  jdl.write(simpleJdl(script.name.replace("%s/" % outDir, "")))
+  logsDir = path.join(outDir, "condorLogs")
+  if not path.exists(logsDir):
+    makedirs(logsDir)
+  
 def buildOneDatacard(category, mass, fitModel, template, outDir):
   fitHTML = open("signalFits_%s/fit_%i.html" % (category, mass))
   for line in fitHTML:
     if "norm = " in line:
       norm = line.split()[2]
-
-  outDcard = open("%s/datacard_%s_%s_%i.txt" % (outDir, category, fitModel, mass), "w")
+  outDcardName = "datacard_%s_%s_%i.txt" % (category, fitModel, mass)
+  outDcard = open("%s/%s" % (outDir, outDcardName), "w")
   template.seek(0)
   for line in template:
     if "shapes signal" in line:
@@ -20,8 +38,28 @@ def buildOneDatacard(category, mass, fitModel, template, outDir):
       outDcard.write(line.replace("2.94084", norm))
     else:
       outDcard.write(line)
+  return outDcardName
       
+def buildCatForModel(category, fitmodel, makeScripts):
+  if not category in ["btag", "antibtag"]:
+    print "error: invalid model called for buildCatForModel"
+  templateName = "../HgammaFit/gofCondor/datacard_%s_%s.txt" % (category, fitModel)
+  template = open(templateName)
+  outDirName   = "datacards_%s_%s" % (category, fitModel)
+  if not path.exists(outDirName):
+    makedirs(outDirName)
+  
+  for mass in getMasses():
+    dCardName = buildOneDatacard(category, mass, fitModel, template, outDirName)
+    if makeScripts:
+      makeScript(dCardName, outDirName, mass)
      
+def buildAllForModel(fitModel):
+  cats = ["btag", "antibtag"]
+  print "building model %s for categories:" % fitModel
+  print cats
+  for cat in cats:
+    buildCatForModel("btag", fitModel)
   
 
 if __name__ == "__main__":
@@ -31,25 +69,31 @@ if __name__ == "__main__":
                     help = "the name of the fit model to build a datacard for."                   )
   parser.add_option("-c", "--category", dest="category",
                     help = "the category: eithe 'btag' or 'antibtag'."                            )
+  parser.add_option("-s", action="store_true", dest="makeScripts", default=False,
+                    help = "toggle making condor scripts [default=False]."                        )
   (options, args) = parser.parse_args()
   
-  if not options.category in ["antibtag", "btag"]:
-    "error: invalid category"
+  if not options.category in ["antibtag", "btag", "all"]:
+    print "error: invalid category"
     exit(1)
+  elif options.category == "all":
+    categories = ["btag", "antibtag"]
+  else:
+    categories = [options.category]
+   
+  print "doing categories: ",
+  print categories
+
+  for category in categories:
+    if not options.fitModel == "all":
+      fitModels = [options.fitModel]
+    else:
+      fitModels = getGoodModelNames(category)
+    for fitModel in fitModels:
+      buildCatForModel(category, fitModel, options.makeScripts)
+        
   
   
-  templateName = "../HgammaFit/gofCondor/datacard_%s_bkg_%s.txt" % (options.category, options.fitModel)
-  template = open(templateName)
-  outDirName   = "datacards_%s_%s" % (options.category, options.fitModel)
-  if not path.exists(outDirName):
-    makedirs(outDirName)
-  
-  masses=[]
-  mass = 710
-  while mass <=3250:
-    masses.append(mass)
-    buildOneDatacard(options.category, mass, options.fitModel, template, outDirName)
-    mass+=10
   
   
     
