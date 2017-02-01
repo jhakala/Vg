@@ -17,3 +17,7 @@ condorFactory.py
 gofCondor
 signalFits_btag
 signalFits_antibtag
+toys_antibtag
+toys_btag
+bias_antibtag_nom*
+bias_btag_nom*
