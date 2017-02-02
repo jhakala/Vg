@@ -4,6 +4,7 @@ from modelNames import getGoodModelNames
 from condorFactory import *
 from getMasses import getMasses
 from condorFactory import *
+from copy import deepcopy
 
 
 def makeToysScripts(model, nToys, seed, category):
@@ -14,8 +15,8 @@ def makeToysScripts(model, nToys, seed, category):
   #toysName = "cat-%s_mod-%s_n-%i_seed_%i.root" % (category, model, nToys, seed)
   
   dcardDir = "datacards_%s_%s" % (category, model)
-  pName     =  "%s_%s_1010.txt" % (category, model)
-  dcardName =  "datacard_%s" % pName
+  pName     =  "%s_%s_1010" % (category, model)
+  dcardName =  "datacard_%s.txt" % pName
   
   incantation = "combine %s -M GenerateOnly -m 1337 -t %i  --saveToys -s %i --expectSignal=0.0 -n BiasTest_%s_%s" % (
     path.join(path.dirname(path.realpath(__file__)), dcardDir, dcardName), 
@@ -51,8 +52,8 @@ def makeBiasScripts(model, alternative, category, nToys):
   print getMasses()
   for mass in getMasses():
     print "working on scripts for mass %i" % mass
-    pName    = "%s_%s_%s.txt" % (category, model, mass)
-    dcardName = "datacard_%s" % pName
+    pName    = "%s_%s_%s" % (category, model, mass)
+    dcardName = "datacard_%s.txt" % pName
     incantation = "combine %s -M MaxLikelihoodFit -m %i --expectSignal=0.0 --rMin=-10000 --rMax=10000 -t %i --toysFile=%s --minos none -n biasStudy-%i" % (
       path.join(path.dirname(path.realpath(__file__)), dcardDir, dcardName), 
       mass, 
@@ -110,29 +111,41 @@ if __name__=="__main__":
     if options.makeToys:
       if options.nToys is not None and options.nToys <= 0:
         print "invalid number of toys given with -t: %i" % options.nToys
+        exit(1)
       elif options.nToys > 0:
         if options.alternateModel is None:
           print "alternate model must be given with -a for generating toys."
-        elif options.alternateModel == "all":
-          for model in getGoodModelNames(category):
-            makeToysScripts(model, options.nToys, options.seed, category)
-        elif options.alternateModel not in getGoodModelNames(category):
+          exit(1)
+        elif options.alternateModel not in getGoodModelNames(category) and not options.alternateModel == "all":
           print "alternate model not valid. options for %s category are:" % category
           print getGoodModelNames(category)
+          exit(1)
+        elif options.alternateModel == "all":
+          for model in deepcopy(getGoodModelNames(category)):
+            makeToysScripts(model, options.nToys, options.seed, category)
         else:
           makeToysScripts(options.alternateModel, options.nToys, options.seed, category)
 
     if options.makeBiasScripts: 
       if options.nominalModel is None:
         print "nominal model must be given with -n for making bias scripts."
+        exit(1)
       elif options.nominalModel not in getGoodModelNames(category):
         print "nominal model not valid. options for %s category are:" % category
         print getGoodModelNames(category)
+        exit(1)
       if options.alternateModel is None:
         print "alternate model must be given with -n for making bias scripts."
-      elif options.alternateModel not in getGoodModelNames(category):
+        exit(1)
+      elif options.alternateModel not in getGoodModelNames(category) and not options.alternateModel == "all":
         print "alternate model not valid. options for %s category are:" % category
         print getGoodModelNames(category)
+        exit(1)
+      elif options.alternateModel == "all":
+        altModels = deepcopy(getGoodModelNames(category))
+        altModels.remove(options.nominalModel)
+        for alternateModel in altModels:
+          makeBiasScripts(options.nominalModel, alternateModel , category, options.nToys)
       else:
         makeBiasScripts(options.nominalModel, options.alternateModel , category, options.nToys)
         
