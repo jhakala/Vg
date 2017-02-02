@@ -31,7 +31,7 @@ def buildOneDatacard(category, mass, fitModel, template, outDir):
     if "shapes signal" in line:
       outDcard.write(line.replace("w_signal_780", "../signalFits_%s/w_signal_%i" % (category, mass)))
     elif "shapes background" in line:
-      outDcard.write(line.replace("cat-%s_model-bkg" % category , "../../HgammaFit/gofCondor/cat-%s_model-bkg" % category))
+      outDcard.write(line.replace("cat-%s_model-bkg" % category , "../../HgammaFit/gof_saturated_%s/cat-%s_model-bkg" % (category, category)))
     elif "shapes data_obs" in line:
       outDcard.write(line.replace("w_data_%s" % category , "../w_data_%s" % category))
     elif "rate" in line:
@@ -43,7 +43,7 @@ def buildOneDatacard(category, mass, fitModel, template, outDir):
 def buildCatForModel(category, fitmodel, makeScripts):
   if not category in ["btag", "antibtag"]:
     print "error: invalid model called for buildCatForModel"
-  templateName = "../HgammaFit/gofCondor/datacard_%s_%s.txt" % (category, fitModel)
+  templateName = "../HgammaFit/gof_saturated_%s/datacard_%s_%s.txt" % (category, category, fitModel)
   template = open(templateName)
   outDirName   = "datacards_%s_%s" % (category, fitModel)
   if not path.exists(outDirName):

@@ -1,7 +1,8 @@
 from sys import argv
 from getMasses import getMasses
 from optparse import OptionParser
-from os import path
+from os import path, makedirs
+from datetime import datetime
 
 
 def Plot(files, label, obs, cat, inDir):
@@ -39,13 +40,9 @@ def Plot(files, label, obs, cat, inDir):
 
     rad = []
     for j in range(0,len(fChain)):
-        print "working on fchain[%i]" % j
         chain = fChain[j]
         thisrad = []
         for  i in range(0,6):
-            print "in loop over limit %i" % i
-            print chain.GetTree()
-            print "about to get entry... "
             chain.GetTree().GetEntry(i)
             thisrad.append(limit_branch.limit)
             #print "limit = %f" %limit_branch.limit
@@ -183,15 +180,20 @@ def Plot(files, label, obs, cat, inDir):
     c1.Update()
     
     print "   >>> Done drawing plots. About to save plots..."
-
+   
+    today = '{:%Y-%m-%d}'.format(datetime.now())
+    outDir = "brazilianFlags_%s" % today
+    if not path.exists(outDir):
+      makedirs(outDir)
+  
     if withAcceptance:
-        c1.SaveAs("brazilianFlag_acc_%s_%s_13TeV.root" % (cat, inDir))
-        c1.SaveAs("brazilianFlag_acc_%s_%s_13TeV.pdf" % (cat, inDir))
+        c1.SaveAs(path.join(outDir, "brazilianFlag_acc_%s_%s_13TeV.root" % (cat, inDir)))
+        c1.SaveAs(path.join(outDir,"brazilianFlag_acc_%s_%s_13TeV.pdf" % (cat, inDir)))
     else:
-        c1.SaveAs("brazilianFlag_%s_%s_13TeV.root" % (cat, inDir))
-        c1.SaveAs("brazilianFlag_%s_%s_13TeV.pdf" % (cat, inDir))
-        grobs.SaveAs("brazilianFlag_observed_%s_%s_13TeV.root" % (cat, inDir))
-        grmean.SaveAs("brazilianFlag_expected_%s_%s_13TeV.root" % (cat, inDir))
+        c1.SaveAs(path.join(outDir, "brazilianFlag_%s_%s_13TeV.root" % (cat, inDir)))
+        c1.SaveAs(path.join(outDir, "brazilianFlag_%s_%s_13TeV.pdf" % (cat, inDir)))
+        grobs.SaveAs(path.join(outDir, "brazilianFlag_observed_%s_%s_13TeV.root" % (cat, inDir)))
+        grmean.SaveAs(path.join(outDir, "brazilianFlag_expected_%s_%s_13TeV.root" % (cat, inDir)))
 
 
 if __name__ == '__main__':

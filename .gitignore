@@ -10,10 +10,10 @@ AutoDict*
 .__*
 .nfs*
 *.pdf
+pdfs
 datacards_btag_*
 datacards_antibtag_*
 datacards_combined_*
-gofCondor
 signalFits_btag
 signalFits_antibtag
 toys_antibtag

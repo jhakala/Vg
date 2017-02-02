@@ -21,15 +21,30 @@ void drawBias () {
     //gStyle->SetPadBottomMargin(0.2);
     
     
-    const int nDirs = 6;
+    const int nDirs = 4;
     
-    Color_t cols[nDirs] = {kBlack, kRed+1, kOrange-3, kGreen+1, kAzure+7 , kMagenta};
-    
-    
-    TString dirNames[nDirs] = {"exp1","expow1","pow1","lau1","atlas1","vvdijet1"};
+    //Color_t cols[nDirs] = {kBlack, kRed+1, kOrange-3, kGreen+1, kAzure+7 , kMagenta};
+    Color_t cols[nDirs] = {kBlack, kRed+1,  kGreen+1, kAzure+7 };
     
     
-    const int nPoints = 111;//46;
+    //TString dirNames[nDirs] = {"exp1","expow1","pow1","lau1","atlas1","vvdijet1"};
+    //TFile* outfile = new TFile("biasPlot_antibtag.root", "RECREATE");
+    //TString dirNames[nDirs] = {
+    //  "bias_antibtag_nom-bkg_atlas1_alt-bkg_dijetsimple2",
+    //  "bias_antibtag_nom-bkg_atlas1_alt-bkg_exp1",
+    //  "bias_antibtag_nom-bkg_atlas1_alt-bkg_expow1",
+    //  "bias_antibtag_nom-bkg_atlas1_alt-bkg_vvdijet1",
+    //};
+    TFile* outfile = new TFile("biasPlot_btag.root", "RECREATE");
+    TString dirNames[nDirs] = {
+      "bias_btag_nom-bkg_dijetsimple2_alt-bkg_atlas1",
+      "bias_btag_nom-bkg_dijetsimple2_alt-bkg_exp1",
+      "bias_btag_nom-bkg_dijetsimple2_alt-bkg_expow1",
+      "bias_btag_nom-bkg_dijetsimple2_alt-bkg_vvdijet1"
+    };
+    
+    
+    const int nPoints = 85;//46;
 
     TCanvas* c1[nDirs][nPoints];
     TFile * f[nDirs][nPoints];
@@ -55,7 +70,7 @@ void drawBias () {
     TLegend* leg2 = new TLegend(0.65,0.35,0.9,0.1,"medians","NDC");
     leg2->SetTextFont(42);
     
-    for (int dd=0; dd!=6; ++dd) {
+    for (int dd=0; dd!=nDirs; ++dd) {
         biasG[dd] = new TGraphErrors(nPoints);
         biasG2[dd] = new TGraphErrors(nPoints);
         biasG[dd]->SetMarkerColor(cols[dd]);
@@ -79,10 +94,11 @@ void drawBias () {
             std::cout<< "dirNames[dd]: " << dirNames[dd] << std::endl ;
             //if (650+i*100 == 1750) continue;
             //std::printf("\nForm... =  /mlfitoutput%d.root\n", masses[i]);
-            int mass = 650+30*i;
+            int mass = 700+30*i;
             //TString nameF = dirNames[dd]+Form("/mlfitoutput%d.root",masses[i]);
             //TString nameF = Form("./mlfitoutput%d.root",masses[i]);
-            TString nameF = dirNames[dd]+Form("/mlfitoutput%d.root",mass);
+            //higgsCombinebiasStudy-920.MaxLikelihoodFit.mH920.123456.root    mlfitbiasStudy-930.root
+            TString nameF = dirNames[dd]+Form("/mlfitbiasStudy-%d.root",mass);
             if (gSystem->AccessPathName(nameF)) continue;
             c1[dd][i] = new TCanvas(Form("c_%d_%d",dd,i),Form("c_%d_%d",dd,i), 700, 700);
             f[dd][i] = new TFile(nameF);
@@ -138,7 +154,6 @@ void drawBias () {
     leg->Draw("same");
     c2a->cd();
     leg2->Draw("same");
-    TFile* outfile = new TFile("biasPlot.root", "RECREATE");
     outfile->cd();
     c2->Write();
     c2a->Write();
