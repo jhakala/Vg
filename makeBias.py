@@ -54,7 +54,7 @@ def makeBiasScripts(model, alternative, category, nToys):
     print "working on scripts for mass %i" % mass
     pName    = "%s_%s_%s" % (category, model, mass)
     dcardName = "datacard_%s.txt" % pName
-    incantation = "combine %s -M MaxLikelihoodFit -m %i --expectSignal=0.0 --rMin=-10000 --rMax=10000 -t %i --toysFile=%s --minos none -n biasStudy-%i" % (
+    incantation = "combine %s -M MaxLikelihoodFit -m %i --expectSignal=0.0 --rMin=-10000 --rMax=10000 -t %i --toysFile=%s  -n biasStudy-%i" % (
       path.join(path.dirname(path.realpath(__file__)), dcardDir, dcardName), 
       mass, 
       nToys,
