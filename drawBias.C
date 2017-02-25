@@ -27,20 +27,31 @@ void drawBias () {
     Color_t cols[nDirs] = {kBlack, kRed+1,  kGreen+1, kAzure+7 };
     
     
-    //TString dirNames[nDirs] = {"exp1","expow1","pow1","lau1","atlas1","vvdijet1"};
-    //TFile* outfile = new TFile("biasPlot_antibtag.root", "RECREATE");
+    //TFile* outfile = new TFile("biasPlot_antibtag_dijet2.root", "RECREATE");
     //TString dirNames[nDirs] = {
-    //  "bias_antibtag_nom-bkg_atlas1_alt-bkg_dijetsimple2",
-    //  "bias_antibtag_nom-bkg_atlas1_alt-bkg_exp1",
-    //  "bias_antibtag_nom-bkg_atlas1_alt-bkg_expow1",
-    //  "bias_antibtag_nom-bkg_atlas1_alt-bkg_vvdijet1",
+    //  "bias_antibtag_nom-bkg_dijetsimple2_alt-bkg_vvdijet1",
+    //  "bias_antibtag_nom-bkg_dijetsimple2_alt-bkg_exp1",
+    //  "bias_antibtag_nom-bkg_dijetsimple2_alt-bkg_expow1",
+    //  "bias_antibtag_nom-bkg_dijetsimple2_alt-bkg_atlas1",
     //};
-    TFile* outfile = new TFile("biasPlot_btag.root", "RECREATE");
+    //TString names[nDirs] = {
+    //  "vvdijet1",
+    //  "exp1",
+    //  "expow1",
+    //  "atlas1",
+    //};
+    TFile* outfile = new TFile("biasPlot_btag_dijet2.root", "RECREATE");
     TString dirNames[nDirs] = {
       "bias_btag_nom-bkg_dijetsimple2_alt-bkg_atlas1",
       "bias_btag_nom-bkg_dijetsimple2_alt-bkg_exp1",
       "bias_btag_nom-bkg_dijetsimple2_alt-bkg_expow1",
       "bias_btag_nom-bkg_dijetsimple2_alt-bkg_vvdijet1"
+    };
+    TString names[nDirs] = {
+      "atlas1",
+      "exp1",
+      "expow1",
+      "vvdijet1"
     };
     
     
@@ -78,13 +89,13 @@ void drawBias () {
         biasG[dd]->SetMarkerSize(.3);
         biasG[dd]->SetLineColor(cols[dd]);
         biasG2[dd]->SetMarkerColor(cols[dd]);
-        biasG[dd]->SetMarkerStyle(20);
-        biasG[dd]->SetMarkerSize(.3);
+        biasG2[dd]->SetMarkerStyle(20);
+        biasG2[dd]->SetMarkerSize(.3);
         biasG2[dd]->SetLineColor(cols[dd]);
         
         
-        leg->AddEntry(biasG[dd],dirNames[dd],"p");
-        leg2->AddEntry(biasG2[dd],dirNames[dd],"p");
+        leg->AddEntry(biasG[dd],names[dd],"p");
+        leg2->AddEntry(biasG2[dd],names[dd],"p");
         
         Double_t quantile,prob;
         prob = 0.5;
@@ -125,7 +136,7 @@ void drawBias () {
             hists[dd][i]->GetXaxis()->SetTitleOffset(1.2);
             std::cout << "   Formatting the hist " << std::endl;
             //c1[dd][i]->SaveAs(dirNames[dd]+Form("_%d.pdf",masses[i]));
-            c1[dd][i]->SaveAs(dirNames[dd]+Form("_%d.pdf",mass));
+            c1[dd][i]->SaveAs(dirNames[dd]+Form("biasPdfs/_%d.pdf",mass));
             
             //std::cout << "  saved file " << dirNames[dd]+Form("_%d.pdf",masses[i]) << std::endl;
             
