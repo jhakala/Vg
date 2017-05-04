@@ -1,7 +1,7 @@
 def getMasses():
   masses=[]
-  mass = 700
+  mass = 710
   while mass <=3250:
     masses.append(mass)
-    mass += 10
+    mass += 30
   return masses

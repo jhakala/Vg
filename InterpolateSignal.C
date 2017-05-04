@@ -25,8 +25,8 @@ void InterpolateSignal(TString postfix) {
     // Observable
     RooRealVar x("x","x",700,4700) ;
     
-    const double step = 10;
-    const int nMCpoints = 13;
+    const double step = 50;
+    const int nMCpoints = 7;
     //const int nMCpoints = 2;
 
     //const int nMCpoints = 16; //W=0
@@ -35,7 +35,8 @@ void InterpolateSignal(TString postfix) {
     
     RooAbsPdf* gMass[nMCpoints];
     //const double masses[nMCpoints] = {300, 400, 500, 650, 740, 745, 750, 755, 760, 765, 850, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2450, 2850, 3250, 3650, 4050, 5000, 6000, 7000};
-    const double masses[nMCpoints] = {750, 850, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2450, 2850, 3250 };
+    //const double masses[nMCpoints] = {750, 850, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2450, 2850, 3250 };
+    const double masses[nMCpoints] = {750,  1000,  1300,  1600, 1900, 2450, 3250 };
     //const double masses[nMCpoints] = {650, 750};
 
     //const double masses[nMCpoints] = {650, 740, 750, 760, 850, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2450, 3000, 3250}; //W=0
@@ -49,7 +50,8 @@ void InterpolateSignal(TString postfix) {
     RooWorkspace* xf[nMCpoints];
 
     for (int i = 0; i!=nMCpoints; ++i ) {
-        TString name = Form("info_%d_",int(masses[i]))+postfix + Form("/w_signal_%d.root",int(masses[i]));
+        //TString name = Form("info_%d_",int(masses[i]))+postfix + Form("/w_signal_%d.root",int(masses[i]));
+        TString name = Form("signalFits_")+postfix + Form("/w_signal_%d.root",int(masses[i]));
         if (!gSystem->AccessPathName(name)) {
             f[i] = new TFile(name);
             std::cout << "printing file with name: " << name << std::endl;

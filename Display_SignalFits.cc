@@ -41,7 +41,7 @@
 int iPeriod = 4;    // 1=7TeV, 2=8TeV, 3=7+8TeV, 7=7+8+13TeV
 int iPos =11;
 
-int rebin=1;
+int rebin=10;
 ofstream outfile;
 
 std::string tostr(float t, int precision=0)
@@ -222,7 +222,7 @@ int Display_SignalFits(std::string postfix,
     iimass << imass;
     masses.push_back(iimass.str());
     
-    std::string dirName = "signalFits_"+postfix;
+    std::string dirName = "signalFits_rebinned"+postfix;
     
     std::string file_postfix = std::string(".root");
     std::cout<< " file input "<< file_postfix<<std::endl;
