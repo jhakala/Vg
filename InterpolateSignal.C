@@ -49,12 +49,14 @@ void InterpolateSignal(TString postfix) {
     RooWorkspace* xf[nMCpoints];
 
     for (int i = 0; i!=nMCpoints; ++i ) {
-        TString name = Form("info_%d_",int(masses[i]))+postfix + Form("/w_signal_%d.root",int(masses[i]));
+        TString name = Form("signalFits_"+postfix+"_fullsim/w_signal_%d.root",int(masses[i]));
         if (!gSystem->AccessPathName(name)) {
             f[i] = new TFile(name);
             std::cout << "printing file with name: " << name << std::endl;
             f[i]->Print();
             xf[i] = (RooWorkspace*)f[i]->Get("Vg");
+            xf[i]->var("x")->setMin(700.);
+            xf[i]->var("x")->setMax(4700.);
             gMass[i] = xf[i]->pdf("signal_fixed_"+postfix);
         } else {
             std::cout<<"File is not found: "<<name<<std::endl;

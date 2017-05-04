@@ -137,6 +137,9 @@ RooPlot* fitSignal(std::string dirName, TH1D *h, int massNum, std::string mass, 
     }
     
     x=new RooRealVar("x", "m_{X} (GeV)", 700., 4700.);
+    x->setBins(4000);
+    x->setMin(700.);
+    x->setMax(4700.);
     RooCBShape signalCore((std::string("signalCore")+postfix).c_str(), "signalCore", *x, *sg_p0, *sg_p1,*sg_p2, *sg_p3);
     RooGaussian signalComb((std::string("signalComb")+postfix).c_str(), "Combinatoric", *x, *sg_p0, *sg_p5);
     RooAddPdf signal((std::string("signal")+postfix).c_str(), "signal", RooArgList(signalCore, signalComb), *sg_p6);
@@ -204,7 +207,7 @@ int Display_SignalFits(std::string postfix,
                        std::string file_histograms="histos_flatTuple_m",
                        int imass=650,
                        int rebin_factor = 1,
-
+                       std::string dirName = "displaySignalFitsTest",
                        bool focus=false)
 {
     
@@ -222,7 +225,7 @@ int Display_SignalFits(std::string postfix,
     iimass << imass;
     masses.push_back(iimass.str());
     
-    std::string dirName = "signalFits_"+postfix;
+    //std::string dirName = "signalFits_"+postfix;
     
     std::string file_postfix = std::string(".root");
     std::cout<< " file input "<< file_postfix<<std::endl;
@@ -390,6 +393,9 @@ int Display_SignalFits(std::string postfix,
         hpull = plot_vg->pullHist();
         RooRealVar* x=new RooRealVar("x", "m_{X} (GeV)", 700, 4700);
         x->setBins(4000);
+        x->setMin(700.);
+        x->setMax(4700.);
+       
 
         RooPlot* frameP = x->frame() ;
         frameP->SetTitle("");
