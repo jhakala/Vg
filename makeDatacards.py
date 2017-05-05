@@ -75,11 +75,15 @@ if __name__ == "__main__":
   
   if not options.category in ["antibtag", "btag", "all"]:
     print "error: invalid category"
+    print "please pick 'btag', 'antibtag', or 'all' with the -c option."
     exit(1)
   elif options.category == "all":
     categories = ["btag", "antibtag"]
   else:
     categories = [options.category]
+
+  if options.fitModel is None:
+    print "please pick a fitModel, either one of the ones from HgammaFit or 'all'"
    
   print "doing categories: ",
   print categories
