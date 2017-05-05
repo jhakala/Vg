@@ -16,7 +16,7 @@ using namespace RooFit ;
 #include "CMS_lumi.C"
 #include "tdrstyle.C"
 
-void InterpolateSignal(TString postfix) {
+void InterpolateSignal(TString postfix, float lowMass, float highMass) {
     setTDRStyle();
 
     // C r e a t e   e n d   p o i n t   p d f   s h a p e s
@@ -26,8 +26,8 @@ void InterpolateSignal(TString postfix) {
     RooRealVar x("x","x",700,4700) ;
     
     const double step = 10;
-    const int nMCpoints = 13;
-    //const int nMCpoints = 2;
+    //const int nMCpoints = 13;
+    const int nMCpoints = 2;
 
     //const int nMCpoints = 16; //W=0
     //const int nMCpoints = 14; //W=5
@@ -35,8 +35,8 @@ void InterpolateSignal(TString postfix) {
     
     RooAbsPdf* gMass[nMCpoints];
     //const double masses[nMCpoints] = {300, 400, 500, 650, 740, 745, 750, 755, 760, 765, 850, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2450, 2850, 3250, 3650, 4050, 5000, 6000, 7000};
-    const double masses[nMCpoints] = {750, 850, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2450, 2850, 3250 };
-    //const double masses[nMCpoints] = {650, 750};
+    //const double masses[nMCpoints] = {750, 850, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2450, 2850, 3250 };
+    const double masses[nMCpoints] = {lowMass, highMass};
 
     //const double masses[nMCpoints] = {650, 740, 750, 760, 850, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2450, 3000, 3250}; //W=0
 

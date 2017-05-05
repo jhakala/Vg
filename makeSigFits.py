@@ -2,6 +2,7 @@ import os
 from subprocess import Popen
 import shlex
 from optparse import OptionParser
+from getMasses import getMasses
 parser = OptionParser()
 parser.add_option("-c", "--category"  ,       dest="category",
                   help = "either 'btag' or 'antibtag'"              )
@@ -20,12 +21,9 @@ if not os.path.exists(dirName):
   os.makedirs(dirName)
 masses = []
 if options.step == "interpolated":
-  mass = 700
-  while mass <= 3250:
-    masses.append(mass)
+  masses=getMasses("all")
 if options.step == "fullsim":
-  masses=[650, 750, 850, 1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2450, 2850, 3250]
-  #masses=[650]
+  masses=getMasses("fullsim")
 else:
   print "please use the -s option and pick step 'interpolated' or 'fullsim'"
   exit(1)
