@@ -82,8 +82,9 @@ if __name__ == "__main__":
   else:
     categories = [options.category]
 
-  if options.fitModel is None:
-    print "please pick a fitModel, either one of the ones from HgammaFit or 'all'"
+  if not options.fitModel:
+    print "please pick a fitModel with the -f option, either one of the ones from HgammaFit or 'all'"
+    exit(1)
    
   print "doing categories: ",
   print categories
