@@ -14,12 +14,13 @@
 #include <TLegend.h>
 #include <TCanvas.h>
 #include <string.h>
+#include "HiggsAnalysis/CombinedLimit/interface/RooMultiPdf.h"
 
 //#include <RooFit.h>
 //#include "RooHist.h"
 //#include "RooDataHist.h"
 //#include "RooGenericPdf.h"
-//#include "RooRealVar.h"
+#include "RooRealVar.h"
 //#include "RooPlot.h"
 //#include "RooWorkspace.h"
 
@@ -34,8 +35,6 @@ int iPos =11;
 bool bias= false;
 bool blind = false;
 double H_mass=125.0;
-double mH_diff_cut=40.;
-double mH_mean_cut=20.;
 
 //double rebin=1;
 bool useRatioFit=false;
@@ -43,9 +42,9 @@ bool useRatioFit=false;
 std::string tags="nominal"; // MMMM
 
 double SR_lo=700.;
-double SR_hi=10000.;
+double SR_hi=4700.;
 RooRealVar x("x", "m_{X} (GeV)", SR_lo, SR_hi);
-x->setBins(4000); // this isn't used any more
+//x->setBins(4000); // this isn't used any more
 
 
 Double_t ErfExp(Double_t x, Double_t c, Double_t offset, Double_t width){
@@ -154,18 +153,19 @@ TCanvas* comparePlots2(RooPlot *plot_bC, RooPlot *plot_bS, TH1F *data, TH1F *qcd
 void BackgroundPrediction(std::string pname="antibtag",int rebin_factor=1,int model_number = 6,int imass=760, bool plotBands = false)
 {
   rebin = rebin_factor;
-  std::string fname = std::string("../fitFilesMETPT34/") + pname + std::string("/histos_bkg.root");
+  std::string fname = std::string("../fitFilesBtagSF/") + pname + std::string("/histos_bkg.root");
 
   stringstream iimass ;
   iimass << imass;
   std::string dirName = "info_"+iimass.str()+"_"+pname;
 
+  cout << "blah 1" <<endl;
 
   gStyle->SetOptStat(000000000);
   gStyle->SetPadGridX(0);
   gStyle->SetPadGridY(0);
 
-  setTDRStyle();
+  cout << "blah 2" <<endl;
   gStyle->SetPadGridX(0);
   gStyle->SetPadGridY(0);
   gStyle->SetOptStat(0000);
@@ -175,14 +175,16 @@ void BackgroundPrediction(std::string pname="antibtag",int rebin_factor=1,int mo
   lumi_13TeV  = "2.7 fb^{-1}"; // default is "19.7 fb^{-1}"
   lumi_7TeV  = "4.9 fb^{-1}";  // default is "5.1 fb^{-1}"
 
+  cout << "blah 3" <<endl;
 
   double ratio_tau=-1;
 
   TFile *f=new TFile(fname.c_str());
   //TODO: this is the index of the data histogram inserted by the readZgamma macro
   //it corresponds to the index of the data input file in the array defined in the readZgamma macro
-  TH1F *h_mX_CR_tau=(TH1F*)f->Get("distribs_14_10_1")->Clone("CR_tau");
-  TH1F *h_mX_SR=(TH1F*)f->Get("distribs_14_10_0")->Clone("The_SR");
+  cout << "blah 4" <<endl;
+  TH1F *h_mX_CR_tau=(TH1F*)f->Get("distribs_27_10_1")->Clone("CR_tau");
+  TH1F *h_mX_SR=(TH1F*)f->Get("distribs_27_10_0")->Clone("The_SR");
   double maxdata = h_mX_SR->GetMaximum();
   double nEventsSR = h_mX_SR->GetSumOfWeights();
   std::cout << "nEventsSR is: " << nEventsSR << std::endl;
@@ -326,7 +328,7 @@ void BackgroundPrediction(std::string pname="antibtag",int rebin_factor=1,int mo
     error_curve[i] = new TGraph();
   }
   error_curve[2] = (TGraph*)aC_plot->getObject(1)->Clone("errs");
-  int nPoints = error_curve[2]->GetN();
+  nPoints = error_curve[2]->GetN();
 
   error_curve[0] = new TGraph(2*nPoints);
   error_curve[1] = new TGraph(2*nPoints);
@@ -356,7 +358,7 @@ void BackgroundPrediction(std::string pname="antibtag",int rebin_factor=1,int mo
     error_curve[2]->SetLineColor(kBlue);
     error_curve[2]->SetLineWidth(3);
 
-    //double binSize = rebin;
+    double binSize = rebin;
 
     for (int i=0; i!=nPoints; ++i) {
       std::cout<< "Step 3.4: i=" << i <<std::endl;
