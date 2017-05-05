@@ -22,7 +22,7 @@ if not os.path.exists(dirName):
 masses = []
 if options.step == "interpolated":
   masses=getMasses("all")
-if options.step == "fullsim":
+elif options.step == "fullsim":
   masses=getMasses("fullsim")
 else:
   print "please use the -s option and pick step 'interpolated' or 'fullsim'"
