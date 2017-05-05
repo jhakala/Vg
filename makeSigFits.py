@@ -1,4 +1,5 @@
 import os
+from time import sleep
 from subprocess import Popen
 import shlex
 from optparse import OptionParser
@@ -20,17 +21,22 @@ dirName = "signalFits_%s_%s" % (options.category, options.step)
 if not os.path.exists(dirName):
   os.makedirs(dirName)
 masses = []
+inputDir = ""
 if options.step == "interpolated":
   masses=getMasses("all")
+  inputDir = "GenSignal"
 elif options.step == "fullsim":
   masses=getMasses("fullsim")
+  inputDir = "../../btagselection"
 else:
   print "please use the -s option and pick step 'interpolated' or 'fullsim'"
   exit(1)
 for mass in masses:
-  incantation = shlex.split("root -x -b -l -q 'Display_SignalFits.cc(\"%s\",\"../../btagselection/\",\"\",\"histos_sig_m\",%i,1,%s)'" % 
-                             (options.category, mass, '"'+dirName+'"')
+  incantation = shlex.split("root -x -b -l -q 'Display_SignalFits.cc(\"%s\",\"%s\",\"\",\"histos_sig_m\",%i,1,%s)'" % 
+                             (options.category, inputDir, mass, '"'+dirName+'"')
                            )
   print incantation
   Popen(incantation, env=cmsenv)
+  sleep(0.3)
+  
   mass += 10

@@ -157,7 +157,7 @@ void InterpolateSignal(TString postfix, float lowMass, float highMass) {
             //for (int k=0; k!=600; ++k)
             //    distribs0->SetBinContent(k+1,0);
 
-            TFile* fileNew = new TFile(Form("GenSignal/")+postfix+Form("/histos_sig-%d.root",int(masses[iPoint+1]-i*step)),"RECREATE");
+            TFile* fileNew = new TFile(Form("GenSignal/")+postfix+Form("/histos_sig_m%d.root",int(masses[iPoint+1]-i*step)),"RECREATE");
             distribs0->Write();
             std::cout << "wrote file " << fileNew->GetName() << std::endl;
             fileNew->Close();
