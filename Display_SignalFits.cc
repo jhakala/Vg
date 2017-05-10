@@ -156,15 +156,22 @@ RooPlot* fitSignal(std::string dirName, TH1D *h, int massNum, std::string mass, 
     params.sg_p5=sg_p5->getVal(); params.sg_p5_err=sg_p5->getError();
     params.sg_p6=sg_p6->getVal(); params.sg_p6_err=sg_p6->getError();
     RooPlot *plot=x->frame();
+    cout << "JSON!! {'" << mass << "_" << postfix << "' :" <<  "[" << sg_p0->getVal();
+    cout << ", " << sg_p1->getVal(); 
+    cout << ", " << sg_p2->getVal(); 
+    cout << ", " << sg_p3->getVal(); 
+    cout << ", " << sg_p0->getVal(); 
+    cout << ", " << sg_p5->getVal(); 
+    cout << ", " << sg_p6->getVal() << "]}" << endl;
     if (color==kBlack)
     {
         signalHistogram.plotOn(plot, RooFit::MarkerColor(color), RooFit::MarkerSize(1.2));
-        signal.plotOn(plot, RooFit::LineColor(color), RooFit::LineWidth(3));
+        signal.plotOn(plot, RooFit::LineColor(kRed), RooFit::LineWidth(3));
     }
     else
     {
         signalHistogram.plotOn(plot, RooFit::MarkerColor(color));
-        signal.plotOn(plot, RooFit::LineColor(color), RooFit::LineWidth(0));
+        signal.plotOn(plot, RooFit::LineColor(kRed), RooFit::LineWidth(3));
     }
     leg->AddEntry((TObject*)0, ("#mu_{CB}= "+tostr(sg_p0->getVal(),4)+" #pm "+tostr(sg_p0->getError(),2)+" GeV").c_str(), "");
     leg->AddEntry((TObject*)0, ("#sigma_{CB}= "+tostr(sg_p1->getVal(),2)+" #pm "+tostr(sg_p1->getError(),2)+" GeV").c_str(), "");
@@ -185,6 +192,8 @@ RooPlot* fitSignal(std::string dirName, TH1D *h, int massNum, std::string mass, 
         RooGaussian signalComb_fixed((std::string("signalComb_fixed_")+postfix).c_str(), "Combinatoric", *x, signal_p0, signal_p5);
         RooAddPdf signal_fixed((std::string("signal_fixed_")+postfix).c_str(), "signal", RooArgList(signalCore_fixed, signalComb_fixed), signal_p6);
         RooWorkspace *w=new RooWorkspace("Vg");
+        w->import(signalCore_fixed);
+        w->import(signalComb_fixed);
         w->import(signal_fixed);
         w->SaveAs((dirName+"/w_signal_"+mass+".root").c_str());
     }
@@ -342,9 +351,9 @@ int Display_SignalFits(std::string postfix,
         
         leg->AddEntry(h_mX_SR, "Signal MC");
         Params params_vg;
-        h_mX_SR->Scale(36420.0);
+        h_mX_SR->Scale(35867.0);
         RooPlot *plot_vg=fitSignal(dirName,h_mX_SR, imass, masses.at(i), kBlack, leg, params_vg,postfix, true);
-        h_mX_SR->Scale(1.0/36420.0);
+        h_mX_SR->Scale(1.0/35867.0);
 
         v_sg_p0.push_back(params_vg.sg_p0); v_sg_p0_err.push_back(params_vg.sg_p0_err);
         v_sg_p1.push_back(params_vg.sg_p1); v_sg_p1_err.push_back(params_vg.sg_p1_err);
