@@ -153,7 +153,7 @@ TCanvas* comparePlots2(RooPlot *plot_bC, RooPlot *plot_bS, TH1F *data, TH1F *qcd
 void BackgroundPrediction(std::string pname="antibtag",int rebin_factor=1,int model_number = 6,int imass=760, bool plotBands = false)
 {
   rebin = rebin_factor;
-  std::string fname = std::string("../fitFilesBtagSF/") + pname + std::string("/histos_bkg.root");
+  std::string fname = std::string("../fitFilesBtagSF/") + pname + std::string("/histos_sideband.root");
 
   stringstream iimass ;
   iimass << imass;
@@ -813,7 +813,7 @@ void BackgroundPrediction(std::string pname="antibtag",int rebin_factor=1,int mo
 
     RooWorkspace *w_data=new RooWorkspace("Vg");
     w_data->import(data_obs);
-
+    std::cout << "data_obs has sumEntries: " << data_obs.sumEntries() << endl;
     w_data->SaveAs((dirName+"/w_data.root").c_str());
   }
 
