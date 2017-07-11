@@ -232,7 +232,7 @@ if __name__ == '__main__':
   tdrstyle.setTDRStyle()
   
   #change the CMS_lumi variables (see CMS_lumi.py)
-  CMS_lumi.lumi_13TeV = "36.42 fb^{-1}"
+  CMS_lumi.lumi_13TeV = "35.9 fb^{-1}"
   
   CMS_lumi.writeExtraText = 1
   CMS_lumi.extraText = "Preliminary"

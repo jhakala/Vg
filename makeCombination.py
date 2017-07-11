@@ -53,9 +53,9 @@ def makeCardsAndScripts(antibtagModel, btagModel, makeCards, makeScripts):
 if __name__ == "__main__":
   parser = OptionParser()
   parser.add_option("-c", action="store_true", dest="makeCards"  , default=False,
-                    help = "toggle making the combined datacards"                 )
+                    help = "toggle making the combined datacards [default=False]" )
   parser.add_option("-s", action="store_true", dest="makeScripts", default=False,
-                    help = "toggle making the condor scripts"                     )
+                    help = "toggle making the condor scripts [default=False]"     )
   parser.add_option("-a", "--antibtagModel", dest="antibtagModel", type="string",
                     help = "input dir for antibtag cards"                         )
   parser.add_option("-b", "--btagModel", dest="btagModel"        , type="string", 

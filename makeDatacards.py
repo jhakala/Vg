@@ -96,9 +96,3 @@ if __name__ == "__main__":
       fitModels = getGoodModelNames(category)
     for fitModel in fitModels:
       buildCatForModel(category, fitModel, options.makeScripts)
-        
-  
-  
-  
-  
-    

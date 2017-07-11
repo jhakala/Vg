@@ -55,7 +55,7 @@ void drawBias () {
     };
     
     
-    const int nPoints = 85;//46;
+    const int nPoints = 80;//46;
 
     TCanvas* c1[nDirs][nPoints];
     TFile * f[nDirs][nPoints];

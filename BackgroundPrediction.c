@@ -153,7 +153,7 @@ TCanvas* comparePlots2(RooPlot *plot_bC, RooPlot *plot_bS, TH1F *data, TH1F *qcd
 void BackgroundPrediction(std::string pname="antibtag",int rebin_factor=1,int model_number = 6,int imass=760, bool plotBands = false)
 {
   rebin = rebin_factor;
-  std::string fname = std::string("../fitFilesBtagSF/") + pname + std::string("/histos_sideband.root");
+  std::string fname = std::string("../fitFilesBtagSF/") + pname + std::string("/histos_mcBG.root");
 
   stringstream iimass ;
   iimass << imass;
@@ -183,8 +183,8 @@ void BackgroundPrediction(std::string pname="antibtag",int rebin_factor=1,int mo
   //TODO: this is the index of the data histogram inserted by the readZgamma macro
   //it corresponds to the index of the data input file in the array defined in the readZgamma macro
   cout << "blah 4" <<endl;
-  TH1F *h_mX_CR_tau=(TH1F*)f->Get("distribs_27_10_1")->Clone("CR_tau");
-  TH1F *h_mX_SR=(TH1F*)f->Get("distribs_27_10_0")->Clone("The_SR");
+  TH1F *h_mX_CR_tau=(TH1F*)f->Get("distribs_mcBG")->Clone("CR_tau");
+  TH1F *h_mX_SR=(TH1F*)f->Get("distribs_mcBG")->Clone("The_SR");
   double maxdata = h_mX_SR->GetMaximum();
   double nEventsSR = h_mX_SR->GetSumOfWeights();
   std::cout << "nEventsSR is: " << nEventsSR << std::endl;
