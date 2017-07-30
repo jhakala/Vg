@@ -154,7 +154,7 @@ void BackgroundPrediction(std::string pname="antibtag",int rebin_factor=1,int mo
 {
   rebin = rebin_factor;
   //std::string fname = std::string("../fitFilesBtagSF/") + pname + std::string("/histos_mcBG.root");
-  std::string fname = std::string("../fitFilesBtagSF/") + pname + std::string("/histos_5070sideband2016SinglePhoton.root");
+  std::string fname = std::string("../vgHists/") + pname + std::string("/histos_sideband100110.root");
 
   stringstream iimass ;
   iimass << imass;
@@ -184,8 +184,8 @@ void BackgroundPrediction(std::string pname="antibtag",int rebin_factor=1,int mo
   //TODO: this is the index of the data histogram inserted by the readZgamma macro
   //it corresponds to the index of the data input file in the array defined in the readZgamma macro
   cout << "blah 4" <<endl;
-  TH1F *h_mX_CR_tau=(TH1F*)f->Get("distribs_27_10_1")->Clone("CR_tau");
-  TH1F *h_mX_SR=(TH1F*)f->Get("distribs_27_10_0")->Clone("The_SR");
+  TH1F *h_mX_CR_tau=(TH1F*)f->Get("distribs_X")->Clone("CR_tau");
+  TH1F *h_mX_SR=(TH1F*)f->Get("distribs_X")->Clone("The_SR");
   double maxdata = h_mX_SR->GetMaximum();
   double nEventsSR = h_mX_SR->GetSumOfWeights();
   std::cout << "nEventsSR is: " << nEventsSR << std::endl;

@@ -53,8 +53,10 @@ void InterpolateSignal(TString postfix, float lowMass, float highMass) {
         if (!gSystem->AccessPathName(name)) {
             f[i] = new TFile(name);
             std::cout << "printing file with name: " << name << std::endl;
-            f[i]->Print();
+            f[i]->ls();
             xf[i] = (RooWorkspace*)f[i]->Get("Vg");
+            std::cout << "printing workspace" << std::endl;
+            xf[i]->Print();
             xf[i]->var("x")->setMin(700.);
             xf[i]->var("x")->setMax(4700.);
             gMass[i] = xf[i]->pdf("signal_fixed_"+postfix);
@@ -65,7 +67,9 @@ void InterpolateSignal(TString postfix, float lowMass, float highMass) {
     }
     
     RooWorkspace w("w");
+    std::cout<<"blah: "<<std::endl;
     w.import(*gMass[0],RooFit::RenameVariable("signal_fixed_"+postfix,"signal_fixed_"+postfix+"_low"),RooFit::RenameAllVariablesExcept("low","x"));
+    std::cout<<"blah2: "<<std::endl;
     gMass[0] = w.pdf("signal_fixed_"+postfix+"_low");
     for (int i = 1; i!=nMCpoints; ++i ) {
         TString name = Form("point_%d",i);
@@ -146,7 +150,7 @@ void InterpolateSignal(TString postfix, float lowMass, float highMass) {
             //double weight = effcy/30000.;
             double weight = effcy;
             //TH1D* distribs0 = new TH1D("distribs_5_10_0","",4000,0,4000);
-            TH1D* distribs0 = (TH1D*)lmorph.createHistogram("distribs_5_10_0",x,Binning(4000,700,4700));
+            TH1D* distribs0 = (TH1D*)lmorph.createHistogram("distribs_X",x,Binning(4000,700,4700));
 
             
             //double effcy2 = distribs0->Integral(600,3600);

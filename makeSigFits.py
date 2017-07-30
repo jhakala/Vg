@@ -27,16 +27,16 @@ if options.step == "interpolated":
   inputDir = "GenSignal"
 elif options.step == "fullsim":
   masses=getMasses("fullsim")
-  inputDir = "../../btagselection"
+  inputDir = "../vgHists"
 else:
   print "please use the -s option and pick step 'interpolated' or 'fullsim'"
   exit(1)
 for mass in masses:
-  incantation = shlex.split("root -x -b -l -q 'Display_SignalFits.cc(\"%s\",\"%s\",\"\",\"histos_sig_m\",%i,1,%s)'" % 
-                             (options.category, inputDir, mass, '"'+dirName+'"')
+  incantation = shlex.split("root -x -b -l -q 'Display_SignalFits.cc(\"%s\",\"%s\",\"\",\"histos_sig_m\",%i,1,%s%s)'" % 
+                             (options.category, inputDir, mass, '"'+dirName+'"', ',"interpolated"' if options.step == "interpolated" else "")
                            )
   print incantation
   Popen(incantation, env=cmsenv)
-  sleep(0.3)
+  sleep(1)
   
   mass += 10
