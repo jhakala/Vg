@@ -130,7 +130,7 @@ def Plot(files, label, obs, cat, inDir):
         grgreen.SetPoint(i,radmasses[i],y2up[i])
         grgreen.SetPoint(n+i,radmasses[n-i-1],y2down[n-i-1])
 
-    grgreen.SetFillColor(rt.kYellow)
+    grgreen.SetFillColor(rt.kOrange)
     grgreen.Draw("f") 
 
 
@@ -139,7 +139,7 @@ def Plot(files, label, obs, cat, inDir):
         gryellow.SetPoint(i,radmasses[i],y1up[i])
         gryellow.SetPoint(n+i,radmasses[n-i-1],y1down[n-i-1])
 
-    gryellow.SetFillColor(rt.kGreen)
+    gryellow.SetFillColor(rt.kGreen+1)
     gryellow.Draw("f,same") 
 
     grmean.Draw("L")
@@ -232,7 +232,7 @@ if __name__ == '__main__':
   tdrstyle.setTDRStyle()
   
   #change the CMS_lumi variables (see CMS_lumi.py)
-  CMS_lumi.lumi_13TeV = "36.42 fb^{-1}"
+  CMS_lumi.lumi_13TeV = "35.9 fb^{-1}"
   
   CMS_lumi.writeExtraText = 1
   CMS_lumi.extraText = "Preliminary"

@@ -35,7 +35,7 @@ def buildOneDatacard(category, mass, fitModel, template, outDir):
     elif "shapes data_obs" in line:
       outDcard.write(line.replace("w_data_%s" % category , "../w_data_%s" % category))
     elif "rate" in line:
-      outDcard.write(line.replace("2.94084", norm))
+      outDcard.write(line.replace(line.split()[1], norm))
     else:
       outDcard.write(line)
   return outDcardName
@@ -66,11 +66,11 @@ if __name__ == "__main__":
 
   parser = OptionParser()
   parser.add_option("-f", "--fitModel", dest="fitModel",
-                    help = "the name of the fit model to build a datacard for."                   )
+                    help = "the name of the fit model to build a datacard for. ex: bkg_dijetsimple2" )
   parser.add_option("-c", "--category", dest="category",
-                    help = "the category: eithe 'btag' or 'antibtag'."                            )
+                    help = "the category: eithe 'btag' or 'antibtag'."                               )
   parser.add_option("-s", action="store_true", dest="makeScripts", default=False,
-                    help = "toggle making condor scripts [default=False]."                        )
+                    help = "toggle making condor scripts [default=False]."                           )
   (options, args) = parser.parse_args()
   
   if not options.category in ["antibtag", "btag", "all"]:
@@ -96,9 +96,3 @@ if __name__ == "__main__":
       fitModels = getGoodModelNames(category)
     for fitModel in fitModels:
       buildCatForModel(category, fitModel, options.makeScripts)
-        
-  
-  
-  
-  
-    

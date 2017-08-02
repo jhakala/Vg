@@ -194,7 +194,7 @@ RooPlot* fitSignal(std::string dirName, TH1D *h, int massNum, std::string mass, 
         RooWorkspace *w=new RooWorkspace("Vg");
         w->import(signalCore_fixed);
         w->import(signalComb_fixed);
-        w->import(signal_fixed);
+        w->import(signal_fixed, RooFit::RenameConflictNodes("_new"));
         w->SaveAs((dirName+"/w_signal_"+mass+".root").c_str());
     }
     return plot;
@@ -217,13 +217,14 @@ int Display_SignalFits(std::string postfix,
                        int imass=650,
                        int rebin_factor = 1,
                        std::string dirName = "displaySignalFitsTest",
+                       std::string type = "fullsim",
                        bool focus=false)
 {
     
     
     writeExtraText = true;       // if extra text
     extraText  = "Simulation";  // default extra text is "Preliminary"
-    lumi_13TeV  = "36.42 fb^{-1}"; // default is "19.7 fb^{-1}"
+    lumi_13TeV  = "35.9 fb^{-1}"; // default is "19.7 fb^{-1}"
 
     
     rebin = rebin_factor;
@@ -247,7 +248,8 @@ int Display_SignalFits(std::string postfix,
     setTDRStyle();
     
     // Calculate nSignal events given production cross section, branching fractions and efficiency
-    double totalLumi=36.42; // /fb
+    // LUMI LUMI
+    double totalLumi=35.9; // /fb
 
     //double prodXsec_1=1; // fb
     
@@ -285,30 +287,34 @@ int Display_SignalFits(std::string postfix,
         std::string klj = "";
         std::string klj2 = "";
         std::cout<<" OPENING FILE: " << (dir_preselection+"/"+postfix+"/"+file_histograms+masses.at(i)+file_postfix).c_str() <<std::endl;
-        if (masses.at(i) == "650" )       {klj = "0";  klj2 = "0"; }
-        else if ( masses.at(i) == "750")  {klj = "1";  klj2 = "0"; }
-        else if (masses.at(i) == "850" ) {klj = "2";  klj2 = "0"; }
-        else if (masses.at(i) == "1000")  {klj = "3";  klj2 = "0"; }
-        else if (masses.at(i) == "1150")  {klj = "4";  klj2 = "0"; }
-        else if (masses.at(i) == "1300")  {klj = "5";  klj2 = "0"; }
-        else if (masses.at(i) == "1450" ) {klj = "6";  klj2 = "0"; }
-        else if (masses.at(i) == "1600" ) {klj = "7";  klj2 = "0"; }
-        else if (masses.at(i) == "1750")  {klj = "8";  klj2 = "0"; }
-        else if (masses.at(i) == "1900" ) {klj = "9";  klj2 = "0"; }
-        else if (masses.at(i) == "2050" ) {klj = "10"; klj2 = "0"; }
-        else if (masses.at(i) == "2450" ) {klj = "11"; klj2 = "0"; }
-        else if (masses.at(i) == "2850" ) {klj = "12"; klj2 = "0"; }
-        else if (masses.at(i) == "3250" ) {klj = "13"; klj2 = "0"; }
-        else {klj = "5"; klj2="0__x";}
-        //klj = "5"; klj2="0__x";
-        
-        std::cout<<"using mass "<<klj<<std::endl;
+        //if (masses.at(i) == "650" )       {klj = "0";  klj2 = "0"; }
+        //else if ( masses.at(i) == "750")  {klj = "1";  klj2 = "0"; }
+        //else if (masses.at(i) == "850" ) {klj = "2";  klj2 = "0"; }
+        //else if (masses.at(i) == "1000")  {klj = "3";  klj2 = "0"; }
+        //else if (masses.at(i) == "1150")  {klj = "4";  klj2 = "0"; }
+        //else if (masses.at(i) == "1300")  {klj = "5";  klj2 = "0"; }
+        //else if (masses.at(i) == "1450" ) {klj = "6";  klj2 = "0"; }
+        //else if (masses.at(i) == "1600" ) {klj = "7";  klj2 = "0"; }
+        //else if (masses.at(i) == "1750")  {klj = "8";  klj2 = "0"; }
+        //else if (masses.at(i) == "1900" ) {klj = "9";  klj2 = "0"; }
+        //else if (masses.at(i) == "2050" ) {klj = "10"; klj2 = "0"; }
+        //else if (masses.at(i) == "2450" ) {klj = "11"; klj2 = "0"; }
+        //else if (masses.at(i) == "2850" ) {klj = "12"; klj2 = "0"; }
+        //else if (masses.at(i) == "3250" ) {klj = "13"; klj2 = "0"; }
+        //else {klj = "5"; klj2="0__x";}
+        ////klj = "5"; klj2="0__x";
+        //
+        //std::cout<<"using mass "<<klj<<std::endl;
         TFile *file = new TFile((dir_preselection+"/"+postfix+"/"+file_histograms+masses.at(i)+file_postfix).c_str());
-        char kljname [20];
-        sprintf(kljname, "distribs_%s_10_%s", klj.c_str(), klj2.c_str());
-        std::cout<< "kljname is" << kljname <<std::endl;
-        TH1D *h_mX_SR=(TH1D*)file->Get(kljname);
-        std::cout << "Debug step 1: GetSumOfWeights for " << kljname << " is " << h_mX_SR->GetSumOfWeights() << std::endl;
+        //char kljname [20];
+        //sprintf(kljname, "distribs_%s_10_%s", klj.c_str(), klj2.c_str());
+        //std::cout<< "kljname is" << kljname <<std::endl;
+        //TH1D *h_mX_SR=(TH1D*)file->Get(kljname);
+        std::string histName = "distribs_X";
+        if (type == "interpolated") histName += "__x";
+        std::cout << "histName: " << histName << std::endl;
+        TH1D *h_mX_SR=(TH1D*)file->Get(histName.c_str());
+        std::cout << "Debug step 1: GetSumOfWeights for " << masses.at(i) << " is " << h_mX_SR->GetSumOfWeights() << std::endl;
         
         double nSignal_init=1.0;
 
