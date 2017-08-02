@@ -224,7 +224,7 @@ int Display_SignalFits(std::string postfix,
     
     writeExtraText = true;       // if extra text
     extraText  = "Simulation";  // default extra text is "Preliminary"
-    lumi_13TeV  = "36.42 fb^{-1}"; // default is "19.7 fb^{-1}"
+    lumi_13TeV  = "35.9 fb^{-1}"; // default is "19.7 fb^{-1}"
 
     
     rebin = rebin_factor;
@@ -248,7 +248,8 @@ int Display_SignalFits(std::string postfix,
     setTDRStyle();
     
     // Calculate nSignal events given production cross section, branching fractions and efficiency
-    double totalLumi=36.42; // /fb
+    // LUMI LUMI
+    double totalLumi=35.9; // /fb
 
     //double prodXsec_1=1; // fb
     
