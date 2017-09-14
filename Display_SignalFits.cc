@@ -27,17 +27,6 @@
 #include "CMS_lumi.C"
 #include "tdrstyle.C"
 
-//#include "RooRealVar.h"
-//#include "RooArgList.h"
-//#include "RooChebychev.h"
-/*#include "RooDataHist.h"
- #include "RooAbsPdf.h"
- #include "RooWorkspace.h"
- #include "RooPlot.h"
- #include "RooFitResult.h"
- #include "RooCBShape.h"
- #include "RooGaussian.h"
- */
 int iPeriod = 4;    // 1=7TeV, 2=8TeV, 3=7+8TeV, 7=7+8+13TeV
 int iPos =11;
 
@@ -62,107 +51,40 @@ struct Params
     double sg_p1;
     double sg_p2;
     double sg_p3;
-    double sg_p4;
-    double sg_p5;
-    double sg_p6;
     double sg_p0_err;
     double sg_p1_err;
     double sg_p2_err;
     double sg_p3_err;
-    double sg_p4_err;
-    double sg_p5_err;
-    double sg_p6_err;
 };
 
 
 RooPlot* fitSignal(std::string dirName, TH1D *h, int massNum, std::string mass, int color, TLegend *leg, Params &params, std::string postfix, bool kinFit=false)
 {
     
-    RooRealVar *x, *sg_p0, *sg_p1, *sg_p2, *sg_p3, *sg_p4, *sg_p5, *sg_p6, *sg_p7, *sg_p8;
-    //x=new RooRealVar("x", "m_{X} (GeV)", 600., 3200.);
+    RooRealVar *x, *sg_p0, *sg_p1, *sg_p2, *sg_p3;
     
     double massL = double(massNum);
-    double rangeLo=TMath::Max(700., massL-0.3*massL), rangeHi=TMath::Min(4700., massL+0.3*massL);
+    double rangeLo=TMath::Max(705., massL-0.3*massL), rangeHi=TMath::Min(4700., massL+0.1*massL);
     
-    // for antibtag 650-750
-    // original
-    //sg_p2=new RooRealVar((std::string("sg_p2")+postfix).c_str(), "sg_p2", 1.3, 0., 200.);
-    //sg_p3=new RooRealVar((std::string("sg_p3")+postfix).c_str(), "sg_p3", 5, 0., 300.); 
-    // all besides antibtag 650-750
-    //sg_p2=new RooRealVar((std::string("sg_p2")+postfix).c_str(), "sg_p2", 1.3, 0.1, 200.);
-    //sg_p3=new RooRealVar((std::string("sg_p3")+postfix).c_str(), "sg_p3", 5, 0.1, 300.);
-    //sg_p6=new RooRealVar((std::string("sg_p6")+postfix).c_str(), "sg_p6", 0.99, 0.,1.);
-    if (postfix == "btag") {
-      sg_p6=new RooRealVar((std::string("sg_p6")+postfix).c_str(), "sg_p6", 1., 0.,1.);
-      sg_p6->setConstant(kTRUE);
-      sg_p0=new RooRealVar((std::string("sg_p0")+postfix).c_str(), "sg_p0", massL, massL-0.1*massL, massL+0.1*massL);
-      sg_p1=new RooRealVar((std::string("sg_p1")+postfix).c_str(), "sg_p1", 0.03*massL, 5., 400.);
-      if (massL<750) {
-        sg_p2=new RooRealVar((std::string("sg_p2")+postfix).c_str(), "sg_p2", 1.3, 5, 200.);
-        sg_p3=new RooRealVar((std::string("sg_p3")+postfix).c_str(), "sg_p3", 5, 3, 300.);
-      }
-      else {
-        sg_p2=new RooRealVar((std::string("sg_p2")+postfix).c_str(), "sg_p2", 1.3, 0.25, 200.);
-        sg_p3=new RooRealVar((std::string("sg_p3")+postfix).c_str(), "sg_p3", 5, 0.15, 300.);
-      }
-      sg_p4=new RooRealVar((std::string("sg_p4")+postfix).c_str(), "sg_p4", massL, 500., 800.);
-      sg_p5=new RooRealVar((std::string("sg_p5")+postfix).c_str(), "sg_p5", 150, 0., 3000.);
-    } 
-    else {
-        if (massL<750) {
-          sg_p0=new RooRealVar((std::string("sg_p0")+postfix).c_str(), "sg_p0", massL, massL-0.1*massL, massL+0.1*massL);
-          sg_p1=new RooRealVar((std::string("sg_p1")+postfix).c_str(), "sg_p1", 0.03*massL, 5., 400.);
-          sg_p2=new RooRealVar((std::string("sg_p2")+postfix).c_str(), "sg_p2", 1.3, 5, 200.);
-          sg_p3=new RooRealVar((std::string("sg_p3")+postfix).c_str(), "sg_p3", 5, 3, 300.);
-          sg_p4=new RooRealVar((std::string("sg_p4")+postfix).c_str(), "sg_p4", massL, 500., 800.);
-          sg_p5=new RooRealVar((std::string("sg_p5")+postfix).c_str(), "sg_p5", 150, 0., 3000.);
-        }
-        else if (massL > 2850) { 
-          sg_p0=new RooRealVar((std::string("sg_p0")+postfix).c_str(), "sg_p0", massL, massL-0.5*massL, massL+0.1*massL);
-          sg_p1=new RooRealVar((std::string("sg_p1")+postfix).c_str(), "sg_p1", 0.01*massL, 5., 400.); 
-          sg_p2=new RooRealVar((std::string("sg_p2")+postfix).c_str(), "sg_p2", 1.3, 0.25, 200.);
-          sg_p3=new RooRealVar((std::string("sg_p3")+postfix).c_str(), "sg_p3", 5, 0.15, 300.);
-          sg_p4=new RooRealVar((std::string("sg_p4")+postfix).c_str(), "sg_p4", massL-0.5*massL, 500., 800.);
-          sg_p5=new RooRealVar((std::string("sg_p5")+postfix).c_str(), "sg_p5", 100, 0., 3000.);
-        }
-        else {
-          sg_p0=new RooRealVar((std::string("sg_p0")+postfix).c_str(), "sg_p0", massL, massL-0.1*massL, massL+0.1*massL);
-          sg_p1=new RooRealVar((std::string("sg_p1")+postfix).c_str(), "sg_p1", 0.03*massL, 5., 400.);
-          sg_p2=new RooRealVar((std::string("sg_p2")+postfix).c_str(), "sg_p2", 1.3, 0.25, 200.);
-          sg_p3=new RooRealVar((std::string("sg_p3")+postfix).c_str(), "sg_p3", 5, 0.15, 300.);
-          sg_p4=new RooRealVar((std::string("sg_p4")+postfix).c_str(), "sg_p4", massL, 500., 800.);
-          sg_p5=new RooRealVar((std::string("sg_p5")+postfix).c_str(), "sg_p5", 150, 0., 3000.);
-        }
-        sg_p6=new RooRealVar((std::string("sg_p6")+postfix).c_str(), "sg_p6", 0.99, 0.,1.);
-    }
+    sg_p0=new RooRealVar((std::string("sg_p0")+postfix).c_str(), "sg_p0",    massL, 0.8*massL  , 1.2*massL  );
+    sg_p1=new RooRealVar((std::string("sg_p1")+postfix).c_str(), "sg_p1",    0.05*massL, 0.005*massL , 0.4*massL  );
+    sg_p2=new RooRealVar((std::string("sg_p2")+postfix).c_str(), "sg_p2",    2,   -10 , 10.     );
+    sg_p3=new RooRealVar((std::string("sg_p3")+postfix).c_str(), "sg_p3",    2,   -10,  10     );
     
     x=new RooRealVar("x", "m_{X} (GeV)", 700., 4700.);
     x->setBins(4000);
     x->setMin(700.);
     x->setMax(4700.);
-    RooCBShape signalCore((std::string("signalCore")+postfix).c_str(), "signalCore", *x, *sg_p0, *sg_p1,*sg_p2, *sg_p3);
-    RooGaussian signalComb((std::string("signalComb")+postfix).c_str(), "Combinatoric", *x, *sg_p0, *sg_p5);
-    RooAddPdf signal((std::string("signal")+postfix).c_str(), "signal", RooArgList(signalCore, signalComb), *sg_p6);
+    RooCBShape signal((std::string("signal")+postfix).c_str(), "signal", *x, *sg_p0, *sg_p1,*sg_p2, *sg_p3);
     
     RooDataHist signalHistogram((std::string("signalHistogram")+postfix).c_str(), "Signal Histogram", RooArgList(*x), h);
-    //signal.fitTo(signalHistogram, RooFit::Range(rangeLo, rangeHi), RooFit::Save());
-    signal.fitTo(signalHistogram, RooFit::Hesse(false), RooFit::Range(rangeLo, rangeHi), RooFit::Save());
+    signal.fitTo(signalHistogram, RooFit::Hesse(false), RooFit::Range(rangeLo, rangeHi), RooFit::Save(), RooFit::SumW2Error(kFALSE));
 
     params.sg_p0=sg_p0->getVal(); params.sg_p0_err=sg_p0->getError();
     params.sg_p1=sg_p1->getVal(); params.sg_p1_err=sg_p1->getError();
     params.sg_p2=sg_p2->getVal(); params.sg_p2_err=sg_p2->getError();
     params.sg_p3=sg_p3->getVal(); params.sg_p3_err=sg_p3->getError();
-    params.sg_p4=sg_p0->getVal(); params.sg_p4_err=sg_p0->getError();
-    params.sg_p5=sg_p5->getVal(); params.sg_p5_err=sg_p5->getError();
-    params.sg_p6=sg_p6->getVal(); params.sg_p6_err=sg_p6->getError();
     RooPlot *plot=x->frame();
-    cout << "JSON!! {'" << mass << "_" << postfix << "' :" <<  "[" << sg_p0->getVal();
-    cout << ", " << sg_p1->getVal(); 
-    cout << ", " << sg_p2->getVal(); 
-    cout << ", " << sg_p3->getVal(); 
-    cout << ", " << sg_p0->getVal(); 
-    cout << ", " << sg_p5->getVal(); 
-    cout << ", " << sg_p6->getVal() << "]}" << endl;
     if (color==kBlack)
     {
         signalHistogram.plotOn(plot, RooFit::MarkerColor(color), RooFit::MarkerSize(1.2));
@@ -174,7 +96,9 @@ RooPlot* fitSignal(std::string dirName, TH1D *h, int massNum, std::string mass, 
         signal.plotOn(plot, RooFit::LineColor(kRed), RooFit::LineWidth(3));
     }
     leg->AddEntry((TObject*)0, ("#mu_{CB}= "+tostr(sg_p0->getVal(),4)+" #pm "+tostr(sg_p0->getError(),2)+" GeV").c_str(), "");
-    leg->AddEntry((TObject*)0, ("#sigma_{CB}= "+tostr(sg_p1->getVal(),2)+" #pm "+tostr(sg_p1->getError(),2)+" GeV").c_str(), "");
+    leg->AddEntry((TObject*)0, ("#sigma_{CB}= "+tostr(sg_p1->getVal(),4)+" #pm "+tostr(sg_p1->getError(),2)+" GeV").c_str(), "");
+    leg->AddEntry((TObject*)0, ("#alpha_{CB}= "+tostr(sg_p2->getVal(),4)+" #pm "+tostr(sg_p2->getError(),2)+" GeV").c_str(), "");
+    leg->AddEntry((TObject*)0, ("n_{CB}= "+tostr(sg_p3->getVal(),4)+" #pm "+tostr(sg_p3->getError(),2)+" GeV").c_str(), "");
     
     // std::cout<<"chi2/dof = "<<plot->chiSquare()<<std::endl;
     
@@ -184,16 +108,8 @@ RooPlot* fitSignal(std::string dirName, TH1D *h, int massNum, std::string mass, 
         RooRealVar signal_p1((std::string("signal_p1_")+postfix).c_str(), "signal_p1", sg_p1->getVal());
         RooRealVar signal_p2((std::string("signal_p2_")+postfix).c_str(), "signal_p2", sg_p2->getVal());
         RooRealVar signal_p3((std::string("signal_p3_")+postfix).c_str(), "signal_p3", sg_p3->getVal());
-        RooRealVar signal_p4((std::string("signal_p4_")+postfix).c_str(), "signal_p4", sg_p0->getVal());
-        RooRealVar signal_p5((std::string("signal_p5_")+postfix).c_str(), "signal_p5", sg_p5->getVal());
-        RooRealVar signal_p6((std::string("signal_p6_")+postfix).c_str(), "signal_p6", sg_p6->getVal());
-        //RooGaussian signal_fixed("signal_fixed", "Signal Prediction", *x, signal_p0, signal_p1);
-        RooCBShape signalCore_fixed((std::string("signalCore_fixed_")+postfix).c_str(), "signalCore", *x, signal_p0, signal_p1,signal_p2, signal_p3);
-        RooGaussian signalComb_fixed((std::string("signalComb_fixed_")+postfix).c_str(), "Combinatoric", *x, signal_p0, signal_p5);
-        RooAddPdf signal_fixed((std::string("signal_fixed_")+postfix).c_str(), "signal", RooArgList(signalCore_fixed, signalComb_fixed), signal_p6);
+        RooCBShape signal_fixed((std::string("signal_fixed")+postfix).c_str(), "signal", *x, signal_p0, signal_p1,signal_p2, signal_p3);
         RooWorkspace *w=new RooWorkspace("Vg");
-        w->import(signalCore_fixed);
-        w->import(signalComb_fixed);
         w->import(signal_fixed, RooFit::RenameConflictNodes("_new"));
         w->SaveAs((dirName+"/w_signal_"+mass+".root").c_str());
     }
@@ -258,9 +174,9 @@ int Display_SignalFits(std::string postfix,
     std::vector<double> v_sg_p1, v_sg_p1_err;
     std::vector<double> v_sg_p2, v_sg_p2_err;
     std::vector<double> v_sg_p3, v_sg_p3_err;
-    std::vector<double> v_sg_p4, v_sg_p4_err;
-    std::vector<double> v_sg_p5, v_sg_p5_err;
-    std::vector<double> v_sg_p6, v_sg_p6_err;
+    //std::vector<double> v_sg_p4, v_sg_p4_err;
+    //std::vector<double> v_sg_p5, v_sg_p5_err;
+    //std::vector<double> v_sg_p6, v_sg_p6_err;
     
     // Write to an HTML File
     // outfile.open((dirName+"/index.html").c_str());
@@ -287,29 +203,7 @@ int Display_SignalFits(std::string postfix,
         std::string klj = "";
         std::string klj2 = "";
         std::cout<<" OPENING FILE: " << (dir_preselection+"/"+postfix+"/"+file_histograms+masses.at(i)+file_postfix).c_str() <<std::endl;
-        //if (masses.at(i) == "650" )       {klj = "0";  klj2 = "0"; }
-        //else if ( masses.at(i) == "750")  {klj = "1";  klj2 = "0"; }
-        //else if (masses.at(i) == "850" ) {klj = "2";  klj2 = "0"; }
-        //else if (masses.at(i) == "1000")  {klj = "3";  klj2 = "0"; }
-        //else if (masses.at(i) == "1150")  {klj = "4";  klj2 = "0"; }
-        //else if (masses.at(i) == "1300")  {klj = "5";  klj2 = "0"; }
-        //else if (masses.at(i) == "1450" ) {klj = "6";  klj2 = "0"; }
-        //else if (masses.at(i) == "1600" ) {klj = "7";  klj2 = "0"; }
-        //else if (masses.at(i) == "1750")  {klj = "8";  klj2 = "0"; }
-        //else if (masses.at(i) == "1900" ) {klj = "9";  klj2 = "0"; }
-        //else if (masses.at(i) == "2050" ) {klj = "10"; klj2 = "0"; }
-        //else if (masses.at(i) == "2450" ) {klj = "11"; klj2 = "0"; }
-        //else if (masses.at(i) == "2850" ) {klj = "12"; klj2 = "0"; }
-        //else if (masses.at(i) == "3250" ) {klj = "13"; klj2 = "0"; }
-        //else {klj = "5"; klj2="0__x";}
-        ////klj = "5"; klj2="0__x";
-        //
-        //std::cout<<"using mass "<<klj<<std::endl;
         TFile *file = new TFile((dir_preselection+"/"+postfix+"/"+file_histograms+masses.at(i)+file_postfix).c_str());
-        //char kljname [20];
-        //sprintf(kljname, "distribs_%s_10_%s", klj.c_str(), klj2.c_str());
-        //std::cout<< "kljname is" << kljname <<std::endl;
-        //TH1D *h_mX_SR=(TH1D*)file->Get(kljname);
         std::string histName = "distribs_X";
         if (type == "interpolated") histName += "__x";
         std::cout << "histName: " << histName << std::endl;
@@ -365,37 +259,13 @@ int Display_SignalFits(std::string postfix,
         v_sg_p1.push_back(params_vg.sg_p1); v_sg_p1_err.push_back(params_vg.sg_p1_err);
         v_sg_p2.push_back(params_vg.sg_p2); v_sg_p2_err.push_back(params_vg.sg_p2_err);
         v_sg_p3.push_back(params_vg.sg_p3); v_sg_p3_err.push_back(params_vg.sg_p3_err);
-        v_sg_p4.push_back(params_vg.sg_p4); v_sg_p4_err.push_back(params_vg.sg_p4_err);
-        v_sg_p5.push_back(params_vg.sg_p5); v_sg_p5_err.push_back(params_vg.sg_p5_err);
-        v_sg_p6.push_back(params_vg.sg_p6); v_sg_p6_err.push_back(params_vg.sg_p6_err);
-        
-
-        //double rangeLoLocal = 700;//750
-        //double rangeHiLocal = 900;//750
-
-        //double rangeLoLocal = 600;//750
-        //double rangeHiLocal = 1000;//750
-        //double rangeHiLocal = 1500;//1000
-        //double rangeLoLocal = 1400;//2000
-        //double rangeHiLocal = 2500;//2000
-
-        //double rangeLoLocal = 2000;//750
-        //double rangeHiLocal = 3500;//750
         
         plot_vg->SetTitle("");
         plot_vg->GetYaxis()->SetRangeUser(0.01, 100);
         plot_vg->GetXaxis()->SetRangeUser(imass-400, imass+400);
-        //plot_vg->GetXaxis()->SetRangeUser(rangeLoLocal, rangeHiLocal);
         plot_vg->GetXaxis()->SetLabelOffset(0.03);
         plot_vg->GetXaxis()->SetNdivisions(505);
 
-        /*plot_vg->GetXaxis()->SetTitleOffset(1.);
-        plot_vg->GetXaxis()->SetLabelSize(0.03);
-        plot_vg->GetYaxis()->SetLabelSize(0.05);
-        plot_vg->GetYaxis()->SetTitleSize(0.04);
-        plot_vg->GetXaxis()->SetTitleSize(0.04);
-        plot_vg->GetYaxis()->SetLabelSize(.03);
-        plot_vg->GetYaxis()->SetTitleOffset(1.2);*/
         
         plot_vg->Draw("same");
         leg->SetFillColor(0);
@@ -415,7 +285,6 @@ int Display_SignalFits(std::string postfix,
         RooPlot* frameP = x->frame() ;
         frameP->SetTitle("");
         frameP->GetXaxis()->SetRangeUser(imass-400, imass+400);
-        //frameP->GetXaxis()->SetRangeUser(rangeLoLocal, rangeHiLocal);
 
         frameP->addPlotable(hpull,"P");
         frameP->GetYaxis()->SetRangeUser(-5,5);
@@ -449,15 +318,7 @@ int Display_SignalFits(std::string postfix,
         outfile<<"   <img src='"<<("c_mX_SR_"+masses.at(i)+".png")<<"'/><br/>"<<std::endl;
         outfile<<"   <h2 align='center'>Without Kin-Fit. Fitted to an Exp-Gauss-Exp function.</h2><br/>"<<std::endl;
         outfile<<"   === Baseline plot === </br>"<<std::endl;
-        //outfile<<"   norm = "<<h_mX_SR->GetSumOfWeights()*totalLumi*prodXsec_1/nSignal_init<<" <br/>"<<std::endl;
         outfile<<"   norm = "<<h_mX_SR->GetSumOfWeights()*totalLumi<<" <br/>"<<std::endl; // weight has already been applied
-        /*outfile<<"sg_p0     param   "<<params_vg.sg_p0<<" -"<<quad(sg_p0_errStat/2., sg_p0_errSyst_min)<<"/+"<<quad(sg_p0_errStat/2., sg_p0_errSyst_max)<<" <br/>"<<std::endl;
-         outfile<<"sg_p1     param   "<<params_vg.sg_p1<<" -"<<quad(sg_p1_errStat/2., sg_p1_errSyst_min)<<"/+"<<quad(sg_p1_errStat/2., sg_p1_errSyst_max)<<" <br/>"<<std::endl;
-         outfile<<"sg_p2     param   "<<params_vg.sg_p2<<"  -"<<quad(sg_p2_errStat/2., sg_p2_errSyst_min)<<"/+"<<quad(sg_p2_errStat/2., sg_p2_errSyst_max)<<" <br/>"<<std::endl;
-         outfile<<"sg_p3     param   "<<params_vg.sg_p3<<"  -"<<quad(sg_p3_errStat/2., sg_p3_errSyst_min)<<"/+"<<quad(sg_p3_errStat/2., sg_p3_errSyst_max)<<" <br/>"<<std::endl;
-         outfile<<"sg_p4     param   "<<params_vg.sg_p4<<"  -"<<quad(sg_p4_errStat/2., sg_p4_errSyst_min)<<"/+"<<quad(sg_p4_errStat/2., sg_p4_errSyst_max)<<" <br/>"<<std::endl;
-         
-         */
         
         outfile<<"   </div>"<<std::endl;
         outfile<<"  </td>"<<std::endl;
@@ -465,16 +326,6 @@ int Display_SignalFits(std::string postfix,
         outfile<<" </tr>"<<std::endl;
         outfile<<"</table>"<<std::endl;
         
-        // Close all files
-        //file->Close();
-        /*	file_JECp1->Close();
-         file_JECm1->Close();
-         file_JERp1->Close();
-         file_JERm1->Close();
-         file_Trigm1->Close();
-         file_bTagDown->Close();
-         file_bTagUp->Close();
-         */
     }
     
     
