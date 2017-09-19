@@ -69,7 +69,7 @@ RooPlot* fitSignal(std::string dirName, TH1D *h, int massNum, std::string mass, 
     sg_p0=new RooRealVar((std::string("sg_p0")+postfix).c_str(), "sg_p0",    massL, 0.8*massL  , 1.2*massL  );
     sg_p1=new RooRealVar((std::string("sg_p1")+postfix).c_str(), "sg_p1",    0.05*massL, 0.005*massL , 0.4*massL  );
     sg_p2=new RooRealVar((std::string("sg_p2")+postfix).c_str(), "sg_p2",    2,   -10 , 10.     );
-    sg_p3=new RooRealVar((std::string("sg_p3")+postfix).c_str(), "sg_p3",    2,   -10,  10     );
+    sg_p3=new RooRealVar((std::string("sg_p3")+postfix).c_str(), "sg_p3",    2,   0,  100     );
     
     x=new RooRealVar("x", "m_{X} (GeV)", 700., 4700.);
     x->setBins(4000);
