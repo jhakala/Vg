@@ -108,7 +108,7 @@ RooPlot* fitSignal(std::string dirName, TH1D *h, int massNum, std::string mass, 
         RooRealVar signal_p1((std::string("signal_p1_")+postfix).c_str(), "signal_p1", sg_p1->getVal());
         RooRealVar signal_p2((std::string("signal_p2_")+postfix).c_str(), "signal_p2", sg_p2->getVal());
         RooRealVar signal_p3((std::string("signal_p3_")+postfix).c_str(), "signal_p3", sg_p3->getVal());
-        RooCBShape signal_fixed((std::string("signal_fixed")+postfix).c_str(), "signal", *x, signal_p0, signal_p1,signal_p2, signal_p3);
+        RooCBShape signal_fixed((std::string("signal_fixed_")+postfix).c_str(), "signal", *x, signal_p0, signal_p1,signal_p2, signal_p3);
         RooWorkspace *w=new RooWorkspace("Vg");
         w->import(signal_fixed, RooFit::RenameConflictNodes("_new"));
         w->SaveAs((dirName+"/w_signal_"+mass+".root").c_str());
