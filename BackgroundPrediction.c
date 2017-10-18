@@ -41,8 +41,8 @@ bool useRatioFit=false;
 
 std::string tags="nominal"; // MMMM
 
-double SR_lo=700.;
-double SR_hi=4700.;
+double SR_lo=800.;
+double SR_hi=4800.;
 RooRealVar x("x", "m_{X} (GeV)", SR_lo, SR_hi);
 //x->setBins(4000); // this isn't used any more
 
