@@ -85,6 +85,12 @@ if __name__ == "__main__":
   if not options.fitModel:
     print "please pick a fitModel with the -f option, either one of the ones from HgammaFit or 'all'"
     exit(1)
+
+  if not options.fitModel in getGoodModelNames(options.category):
+    print "fit model", options.fitModel, "is not valid. Valid options are:"
+    print getGoodModelNames(options.category)
+    exit(1)
+    
    
   print "doing categories: ",
   print categories
