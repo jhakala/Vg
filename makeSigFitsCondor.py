@@ -9,7 +9,7 @@ if not path.exists(logDir):
   makedirs(logDir)
 
 for cat in ["antibtag", "btag"]:
-  for fits in [["fullsim", 14], ["interpolated", 256]]:
+  for fits in [["fullsim", 14], ["interpolated", 260]]:
     scriptName = "h_%s_sigFit_%s.sh" % (cat, fits[0])
     outScript = open(path.join(condorDir, scriptName), "w")
     incantation = "python makeSigFits.py -c %s -s %s -i $1" % (cat, fits[0])
