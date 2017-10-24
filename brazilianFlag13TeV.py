@@ -9,7 +9,9 @@ def Plot(files, label, obs, cat, inDir):
 
     radmasses = []
     for f in files:
-        radmasses.append(int(f.GetName().replace("higgsCombineTest.Asymptotic.mH", "").replace(".root","").replace("%s/"%inDir, "")))
+        mass = int(f.GetName().replace("higgsCombineTest.Asymptotic.mH", "").replace(".root","").replace("%s/"%inDir, ""))
+        if mass >= 700:
+            radmasses.append(mass)
     print "files is:"
     print files
     print "radmasses is:" 
@@ -251,7 +253,7 @@ if __name__ == '__main__':
   gStyle.SetPadTopMargin(0.06)
   #channels=["RS1WW","RS1ZZ","WZ","qW","qZ","BulkWW","BulkZZ"]
 
-  masses=getMasses()
+  masses=[mass for mass in getMasses() if mass >= 700]
 
   HPplots=[]
   LPplots=[]
