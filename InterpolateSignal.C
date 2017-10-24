@@ -84,16 +84,16 @@ void InterpolateSignal(TString postfix, float lowMass, float highMass, TString o
     if (postfix == "antibtag") {
 
         std::cout << "got funceff for antibtag" << std::endl;
-        funcEff = new TF1("fitFunctionAntiBtag", "[0]*TMath::TanH((x-[1])*[2])*TMath::Power(x,[3])+[4]", 650, 3250);//W=0
-        funcEff->SetParameters(0.155540876641 , 464.483249363 , 0.00165214350276 , -0.000960109374091 , 0.00649591356139); //W=0
+        funcEff = new TF1("fitFunctionAntiBtag", "[0]*TMath::ATan((x-[1])*[2])*TMath::Power(x,[3])+[4]", 650, 3250);//W=0
+        funcEff->SetParameters(0.11858579288 , 592.727044618 , 0.00745361464364 , 0.0226065454657 , -0.0524466285873); //W=0
 
         //funcEff->SetParameters(-0.123432,0.000574454,-3.94051e-07,1.10552e-10,-1.13539e-14); //W=5.6 all range
         //funcEff->SetParameters(-0.174736,0.00069154,-4.90708e-07,1.42739e-10,-1.51912e-14); //W=5.6 600-3600
         //funcEff->SetParameters(-0.124845,0.000571665,-4.0269e-07,1.15632e-10,-1.20963e-14); //W=10.0 all range
         //funcEff->SetParameters(-0.204962,0.000752754,-5.49665e-07,1.63818e-10,-1.76895e-14); //W=10.0 600-3600
     } else if (postfix == "btag") {
-        funcEff = new TF1("fitFunctionBtag", "[0]+[1]*TMath::ATan([2]*(x-[3]))*TMath::Exp([4]*TMath::Power(x-[5], [6]))", 650, 3250);
-        funcEff->SetParameters(0.0164102690347 , 0.179684107425 , 0.00374967697452 , 684.190489303 , -2.30564873418e-07 , -7618.26703627 , 1.72754954338); //W=0
+        funcEff = new TF1("fitFunctionBtag", "[0]+[1]*TMath::ATan((x-[2])^2/[3])*TMath::Exp(-x/[4])", 650, 3250);
+        funcEff->SetParameters(-0.0373275408617 , 0.0783383541589 , 412.930097757 , 95607.4325324 , 8769.94223953); //W=0
 
         //funcEff = new TF1("effFunc","pol4",0,10000);//W=5.6
         //funcEff->SetParameters(-0.0371581,0.000141343,-1.06872e-07,3.13078e-11,-3.1873e-15); //W=5.6 all range
