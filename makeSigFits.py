@@ -19,7 +19,7 @@ if not options.category in ["antibtag", "btag"]:
 
 cmsenv = os.environ
 
-dirName = "signalFits_%s_%s" % (options.category, options.step)
+dirName = "signalFitsHack650_%s_%s" % (options.category, options.step)
 if not os.path.exists(dirName):
   os.makedirs(dirName)
 masses = []
@@ -29,7 +29,7 @@ if options.step == "interpolated":
   inputDir = "GenSignal"
 elif options.step == "fullsim":
   masses=getMasses("fullsim")
-  inputDir = "../vgHists"
+  inputDir = "../vgHists_600"
 else:
   print "please use the -s option and pick step 'interpolated' or 'fullsim'"
   exit(1)

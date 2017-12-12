@@ -10,6 +10,7 @@ def Plot(files, label, obs, cat, inDir):
     radmasses = []
     for f in files:
         mass = int(f.GetName().replace("higgsCombineTest.Asymptotic.mH", "").replace(".root","").replace("%s/"%inDir, ""))
+        #mass = int(f.GetName().replace("higgsCombineTest.AsymptoticNew.mH", "").replace(".root","").replace("%s/"%inDir, ""))
         if mass >= 700:
             radmasses.append(mass)
     print "files is:"
@@ -54,7 +55,7 @@ def Plot(files, label, obs, cat, inDir):
 
     # we do a plot r*MR
     mg = rt.TMultiGraph()
-    mg.SetTitle("X -> ZZ")
+    mg.SetTitle("X -> H#gamma")
     c1 = rt.TCanvas("c1","A Simple Graph Example",200,10,600,600)
     x = []
     yobs = []
@@ -116,6 +117,12 @@ def Plot(files, label, obs, cat, inDir):
         mg.GetYaxis().SetTitle("#sigma #times B("+resonance+" #rightarrow "+label.split("_")[0].replace("RS1","").replace("Bulk","")+") #times A (fb)")
     else:
         mg.GetYaxis().SetTitle("95% CL UL on #sigma #times B(X#rightarrowH#gamma) (fb)")
+        mg.GetYaxis().SetTitleSize(0.035)
+        mg.GetYaxis().SetTitleOffset(0)
+        mg.GetXaxis().SetTitleSize(0.035)
+        mg.GetXaxis().SetTitleOffset(1)
+        mg.GetXaxis().SetLabelSize(0.035)
+        mg.GetYaxis().SetLabelSize(0.035)
     mg.GetYaxis().SetRangeUser(10,5000)
     mg.GetXaxis().SetNdivisions(605)
 
@@ -151,7 +158,7 @@ def Plot(files, label, obs, cat, inDir):
     gtheory.SetLineColor(rt.kBlack)
     gtheory.SetLineWidth(4)
 
-    leg = rt.TLegend(0.5,0.65,0.95,0.89,"H(b#bar{b})#gamma: %s category" % cat)
+    leg = rt.TLegend(0.5,0.65,0.95,0.89,"H(q#bar{q})#gamma: %s category" % cat)
     leg2 = rt.TLegend(0.49,0.55,0.95,0.89)
     leg.SetFillColor(rt.kWhite)
     leg.SetFillStyle(0)
@@ -252,14 +259,17 @@ if __name__ == '__main__':
   gStyle.SetPadRightMargin(0.06)
   gStyle.SetPadTopMargin(0.06)
   #channels=["RS1WW","RS1ZZ","WZ","qW","qZ","BulkWW","BulkZZ"]
-
-  masses=[mass for mass in getMasses() if mass >= 700]
+  #badmasses = [1690, 1650, 1600, 1610, 1600, 1590, 1530, 1510, 1520, 1560, 1520, 810, 820, 780, 710, 720, 730, 740, 750 , 760]
+  badmasses = [1190]
+  masses=[mass for mass in getMasses() if mass > 720 and mass not in badmasses] 
 
   HPplots=[]
   LPplots=[]
   combinedplots=[]
   for mass in masses:
+     #HPplots+=[rt.TFile(path.join(options.inDir, "higgsCombineTest.AsymptoticNew.mH"+str(mass)+".root"))]
      HPplots+=[rt.TFile(path.join(options.inDir, "higgsCombineTest.Asymptotic.mH"+str(mass)+".root"))]
+
      print "added HPplot %s" % HPplots[-1]
 
   Plot(HPplots,category+"_Hgamma", unblind, category, options.inDir)
