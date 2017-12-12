@@ -154,7 +154,7 @@ void BackgroundPrediction(std::string pname="antibtag",int rebin_factor=1,int mo
 {
   rebin = rebin_factor;
   //std::string fname = std::string("../fitFilesBtagSF/") + pname + std::string("/histos_mcBG.root");
-  std::string fname = std::string("../vgHists/") + pname + std::string("/histos_sideband100110.root");
+  std::string fname = std::string("../vgHists/") + pname + std::string("/histos_data2016SinglePhoton.root");
 
   stringstream iimass ;
   iimass << imass;
@@ -740,17 +740,17 @@ void BackgroundPrediction(std::string pname="antibtag",int rebin_factor=1,int mo
     gSystem->Load("libdiphotonsUtils");
 
     //PAY ATTENTION! THIS NEEDS TO BE SWITCHED
-    TFile *f = new TFile("antibtag_multipdf1021.root");
-    RooWorkspace* xf = (RooWorkspace*)f->Get("wtemplates");
+    //TFile *f = new TFile("antibtag_multipdf1021.root");
+    //RooWorkspace* xf = (RooWorkspace*)f->Get("wtemplates");
     RooWorkspace *w_bg_jh=new RooWorkspace("Vg");
     for(int i=6; i<=6; i++){
-      RooMultiPdf *mpdf = (RooMultiPdf *)xf->pdf("model_bkg_AntiBtag");
+      //RooMultiPdf *mpdf = (RooMultiPdf *)xf->pdf("model_bkg_AntiBtag");
       std::cout<< "Step 6"<<std::endl;
-      std::cout<<"Number of pdfs "<<mpdf->getNumPdfs()<<std::endl;
-      for (int j=0; j!=mpdf->getNumPdfs(); ++j){
-        std::cout<<mpdf->getPdf(j)->GetName()<<std::endl;
-      }
-      RooAbsPdf *bg_jh = mpdf->getPdf(i);//->clone();
+      //std::cout<<"Number of pdfs "<<mpdf->getNumPdfs()<<std::endl;
+      //for (int j=0; j!=mpdf->getNumPdfs(); ++j){
+      //  std::cout<<mpdf->getPdf(j)->GetName()<<std::endl;
+      //}
+      //RooAbsPdf *bg_jh = mpdf->getPdf(i);//->clone();
       TCanvas* testJ = new TCanvas("testJ", "testJ");
       testJ->cd();
       //frame=x.frame();
@@ -761,8 +761,8 @@ void BackgroundPrediction(std::string pname="antibtag",int rebin_factor=1,int mo
       //frame->Draw();
       //h_mX_SR.Draw("SAME");
       testJ->SaveAs("testJ.root", "RECREATE");
-      std::cout << " this background chosen was: " << bg_jh->GetName() << std::endl;
-      w_bg_jh->import(bg);
+      //std::cout << " this background chosen was: " << bg_jh->GetName() << std::endl;
+      //w_bg_jh->import(bg);
       //w_bg_jh->Print("V");
       //std::cout << "Step 6.1" << std::endl;
       ////std::cerr<<w_bg_jh->var("x")<<std::endl;

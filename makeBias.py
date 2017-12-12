@@ -1,4 +1,5 @@
 from os import path, chmod, makedirs
+from shutil import copytree, rmtree
 from optparse import OptionParser
 from modelNames import getGoodModelNames
 from condorFactory import *
@@ -14,11 +15,12 @@ def makeToysScripts(model, nToys, seed, category):
     makedirs(outDir)
   #toysName = "cat-%s_mod-%s_n-%i_seed_%i.root" % (category, model, nToys, seed)
   
-  dcardDir = "datacards_%s_%s" % (category, model)
+  dcardDir= "datacards_%s_%s" % (category, model)
   pName     =  "%s_%s_1010" % (category, model)
   dcardName =  "datacard_%s.txt" % pName
+      
   
-  incantation = "combine %s -M GenerateOnly -m 1337 -t %i  --saveToys -s %i --expectSignal=0.0 -n BiasTest_%s_%s" % (
+  incantation = "combine %s -M GenerateOnly -m 1337 -t %i  --saveToys -s %i --expectSignal=0.0 -n BiasTest_%s_%s --toysFrequentist" % (
     path.join(path.dirname(path.realpath(__file__)), dcardDir, dcardName), 
     nToys, 
     seed, 
@@ -46,15 +48,23 @@ def makeBiasScripts(model, alternative, category, nToys):
   outDir = "bias_%s_nom-%s_alt-%s" % (category, model, alternative)
   if not path.exists(outDir):
     makedirs(outDir)
-  dcardDir = "datacards_%s_%s" % (category, model)
-  toysName = "higgsCombineBiasTest_%s_%s.GenerateOnly.mH1337.501337.root" % (category, alternative)
+  #dcardDir = "datacards_%s_%s" % (category, model)
+  dcardOrigDir = "datacards_%s_%s" % (category, model)
+  dcardDir = "datacards_bias_%s_%s" % (category, model)
+  if path.exists(dcardDir):
+    rmtree(dcardDir)
+  copytree(dcardOrigDir, dcardDir)
+  toysName = "higgsCombineBiasTest_%s_%s.GenerateOnly.mH1337.%i.root" % (category, alternative, options.seed)
   print "masses:" 
   print getMasses()
   for mass in getMasses():
     print "working on scripts for mass %i" % mass
     pName    = "%s_%s_%s" % (category, model, mass)
     dcardName = "datacard_%s.txt" % pName
-    incantation = "combine %s -M MaxLikelihoodFit -m %i --expectSignal=0.0 --rMin=-10000 --rMax=10000 -t %i --toysFile=%s  -n biasStudy-%i" % (
+    #with open(path.join(dcardDir, dcardName), 'a') as f:
+    #  f.write("------" + str("\n"))
+    #  f.write("%s_norm rateParam  Vg background 1.1" % model)
+    incantation = "combine %s -M MaxLikelihoodFit -m %i --expectSignal=0.0 --rMin=-10000 --rMax=10000 -t %i --minimizerAlgo=Minuit --minimizerStrategy=2 --toysFile=%s -n biasStudy-%i --minos poi --forceRecreateNLL --minimizerTolerance=0.0001 " % (
       path.join(path.dirname(path.realpath(__file__)), dcardDir, dcardName), 
       mass, 
       nToys,
@@ -108,24 +118,6 @@ if __name__=="__main__":
 
 
   for category in categories: 
-    if options.makeToys:
-      if options.nToys is not None and options.nToys <= 0:
-        print "invalid number of toys given with -t: %i" % options.nToys
-        exit(1)
-      elif options.nToys > 0:
-        if options.alternateModel is None:
-          print "alternate model must be given with -a for generating toys."
-          exit(1)
-        elif options.alternateModel not in getGoodModelNames(category) and not options.alternateModel == "all":
-          print "alternate model not valid. options for %s category are:" % category
-          print getGoodModelNames(category)
-          exit(1)
-        elif options.alternateModel == "all":
-          for model in deepcopy(getGoodModelNames(category)):
-            makeToysScripts(model, options.nToys, options.seed, category)
-        else:
-          makeToysScripts(options.alternateModel, options.nToys, options.seed, category)
-
     if options.makeBiasScripts: 
       if options.nominalModel is None:
         print "nominal model must be given with -n for making bias scripts."
@@ -150,3 +142,20 @@ if __name__=="__main__":
         makeBiasScripts(options.nominalModel, options.alternateModel , category, options.nToys)
         
     
+    if options.makeToys:
+      if options.nToys is not None and options.nToys <= 0:
+        print "invalid number of toys given with -t: %i" % options.nToys
+        exit(1)
+      elif options.nToys > 0:
+        if options.alternateModel is None:
+          print "alternate model must be given with -a for generating toys."
+          exit(1)
+        elif options.alternateModel not in getGoodModelNames(category) and not options.alternateModel == "all":
+          print "alternate model not valid. options for %s category are:" % category
+          print getGoodModelNames(category)
+          exit(1)
+        elif options.alternateModel == "all":
+          for model in deepcopy(getGoodModelNames(category)):
+            makeToysScripts(model, options.nToys, options.seed, category)
+        else:
+          makeToysScripts(options.alternateModel, options.nToys, options.seed, category)

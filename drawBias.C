@@ -21,37 +21,142 @@ void drawBias () {
     //gStyle->SetPadBottomMargin(0.2);
     
     
-    const int nDirs = 4;
-    
+    //const int nDirs = 6;
     //Color_t cols[nDirs] = {kBlack, kRed+1, kOrange-3, kGreen+1, kAzure+7 , kMagenta};
-    Color_t cols[nDirs] = {kBlack, kRed+1,  kGreen+1, kAzure+7 };
     
+    const int nDirs = 3;
+    //Color_t cols[nDirs] = {kRed, kRed+2, kOrange+7, kRed-8, kGreen+2, kCyan+1, kAzure};
+    Color_t cols[nDirs] = {kGreen+2, kCyan+1, kAzure};
     
-    //TFile* outfile = new TFile("biasPlot_antibtag_dijet2.root", "RECREATE");
+    //const int nDirs = 1;
+    //Color_t cols[nDirs] = {kBlack};
+    
+    //const int nDirs = 2;
+    //Color_t cols[nDirs] = {kBlack, kRed+1};
+
+    //TFile* outfile = new TFile("biasPlot_antibtag_dijet2_test.root", "RECREATE");
     //TString dirNames[nDirs] = {
+    //  //"bias_antibtag_nom-bkg_dijetsimple2_alt-bkg_atlas1",
+    //  "bias_antibtag_nom-bkg_dijetsimple2_alt-bkg_vvdijet1",
+    //  //"bias_antibtag_nom-bkg_dijetsimple2_alt-bkg_exp1",
+    //  //"bias_antibtag_nom-bkg_dijetsimple2_alt-bkg_expow1",
+    //  "bias_antibtag_nom-bkg_dijetsimple2_alt-bkg_expow3",
+    //  //"bias_antibtag_nom-bkg_dijetsimple2_alt-bkg_atlas2"
+    //};
+    //
+    // TString names[nDirs] = {
+    //   //"atlas1",
+    //   "vvdijet1",
+    //   //"exp1",
+    //   //"expow1",
+    //   "expow3",
+    //   //"atlas2"
+    // };
+    //TFile* outfile = new TFile("biasPlot_btag_dijet2.root", "RECREATE");
+    
+
+    //TFile* outfile = new TFile("biasPlot_antibtag_dijet2_new2.root", "RECREATE");
+    //TString dirNames[nDirs] = {
+    //  //"bias_antibtag_nom-bkg_dijetsimple2_alt-bkg_atlas1",
+    //  //"bias_antibtag_nom-bkg_dijetsimple2_alt-bkg_vvdijet1",
+    //  //"bias_antibtag_nom-bkg_dijetsimple2_alt-bkg_exp1",
+    //  //"bias_antibtag_nom-bkg_dijetsimple2_alt-bkg_expow1",
+    //  "bias_antibtag_nom-bkg_dijetsimple2_alt-bkg_expow2",
+    //  "bias_antibtag_nom-bkg_dijetsimple2_alt-bkg_vvdijet2",
+    //  "bias_antibtag_nom-bkg_dijetsimple2_alt-bkg_dijet3"
+    //};
+    //
+    // TString names[nDirs] = {
+    //   //"atlas1",
+    //   //"vvdijet1",
+    //   //"exp1",
+    //   //"expow1",
+    //   "expow2",
+    //   "vvdijet2",
+    //   "dijet3"
+    // };
+    
+    //TFile* outfile = new TFile("biasPlot_antibtag_vvdijet1.root", "RECREATE");
+    //TString dirNames[nDirs] = {
+    //  "bias_antibtag_nom-bkg_vvdijet1_alt-bkg_dijetsimple2",
+    //  //"bias_antibtag_nom-bkg_vvdijet1_alt-bkg_atlas1",
+    //  //"bias_antibtag_nom-bkg_vvdijet1_alt-bkg_pow1",
+    //  "bias_antibtag_nom-bkg_vvdijet1_alt-bkg_exp1",
+    //  "bias_antibtag_nom-bkg_vvdijet1_alt-bkg_expow1",
+    //  "bias_antibtag_nom-bkg_vvdijet1_alt-bkg_expow2",
+    //  "bias_antibtag_nom-bkg_vvdijet1_alt-bkg_expow3",
+    //  "bias_antibtag_nom-bkg_vvdijet1_alt-bkg_vvdijet2"
+    //  //"bias_antibtag_nom-bkg_vvdijet1_alt-bkg_atlas2"
+    //};
+    //
+    // TString names[nDirs] = {
+    //   "dijet2",
+    //   //"atlas1",
+    //   //"pow1",
+    //   "exp1",
+    //   "expow1",
+    //   "expow2",
+    //   "expow3",
+    //   "vvdijet2"
+    //   //"atlas2"
+    // };
+
+
+    //TFile* outfile = new TFile("biasPlot_btag_vvdijet1.root", "RECREATE");
+    //TString dirNames[nDirs] = {
+    //  "bias_btag_nom-bkg_vvdijet1_alt-bkg_atlas1",
+    //  "bias_btag_nom-bkg_vvdijet1_alt-bkg_pow1",
+    //  "bias_btag_nom-bkg_vvdijet1_alt-bkg_exp1",
+    //  "bias_btag_nom-bkg_vvdijet1_alt-bkg_expow1",
+    //  "bias_btag_nom-bkg_vvdijet1_alt-bkg_vvdijet2",
+    //  "bias_btag_nom-bkg_vvdijet1_alt-bkg_atlas2"
+    //};
+    //
+    // TString names[nDirs] = {
+    //   "atlas1",
+    //   "pow1",
+    //   "exp1",
+    //   "expow1",
+    //   "vvdijet2",
+    //   "atlas2"
+    // };
+
+    //TFile* outfile = new TFile("biasPlot_antibtag_dijet2_new.root", "RECREATE");
+    //TString dirNames[nDirs] = {
+    //  "bias_antibtag_nom-bkg_dijetsimple2_alt-bkg_atlas1",
     //  "bias_antibtag_nom-bkg_dijetsimple2_alt-bkg_vvdijet1",
     //  "bias_antibtag_nom-bkg_dijetsimple2_alt-bkg_exp1",
     //  "bias_antibtag_nom-bkg_dijetsimple2_alt-bkg_expow1",
-    //  "bias_antibtag_nom-bkg_dijetsimple2_alt-bkg_atlas1",
+    //  "bias_antibtag_nom-bkg_dijetsimple2_alt-bkg_expow3",
+    //  "bias_antibtag_nom-bkg_dijetsimple2_alt-bkg_atlas2"
     //};
-    //TString names[nDirs] = {
-    //  "vvdijet1",
-    //  "exp1",
-    //  "expow1",
-    //  "atlas1",
-    //};
-    TFile* outfile = new TFile("biasPlot_btag_dijet2.root", "RECREATE");
+    //
+    // TString names[nDirs] = {
+    //   "atlas1",
+    //   "vvdijet1",
+    //   "exp1",
+    //   "expow1",
+    //   "expow3",
+    //   "atlas2"
+    // };
+    TFile* outfile = new TFile("biasPlot_btag_dijet2_new2.root", "RECREATE");
     TString dirNames[nDirs] = {
       "bias_btag_nom-bkg_dijetsimple2_alt-bkg_atlas1",
-      "bias_btag_nom-bkg_dijetsimple2_alt-bkg_exp1",
-      "bias_btag_nom-bkg_dijetsimple2_alt-bkg_expow1",
-      "bias_btag_nom-bkg_dijetsimple2_alt-bkg_vvdijet1"
+      //"bias_btag_nom-bkg_dijetsimple2_alt-bkg_exp1",
+      "bias_btag_nom-bkg_dijetsimple2_alt-bkg_vvdijet2",
+      //"bias_btag_nom-bkg_dijetsimple2_alt-bkg_expow1",
+      "bias_btag_nom-bkg_dijetsimple2_alt-bkg_expow2"
+      //"bias_btag_nom-bkg_dijetsimple2_alt-bkg_atlas2"
     };
+    
     TString names[nDirs] = {
       "atlas1",
-      "exp1",
-      "expow1",
-      "vvdijet1"
+      //"exp1",
+      "vvdijet2",
+      //"expow1",
+      "expow2"
+      //"expow3",
+      //"atlas2"
     };
     
     
@@ -76,9 +181,9 @@ void drawBias () {
     hra->SetXTitle("m_{X} (GeV)");
     hra->SetYTitle("medians");
     
-    TLegend* leg = new TLegend(0.75,1.0,1.0,0.75,"pull mean","NDC");
+    TLegend* leg = new TLegend(0.7,0.895,0.895,0.705,"means","NDC");
     leg->SetTextFont(42);
-    TLegend* leg2 = new TLegend(0.65,0.35,0.9,0.1,"medians","NDC");
+    TLegend* leg2 = new TLegend(0.7,0.895,0.895,0.705,"medians","NDC");
     leg2->SetTextFont(42);
     
     for (int dd=0; dd!=nDirs; ++dd) {
@@ -102,7 +207,7 @@ void drawBias () {
         //int masses[] = {650, 710, 750, 810, 850, 900, 930, 1010, 1030, 1110, 1160, 1210, 1250, 1300, 1350, 1410, 1460, 1510};
         for (int i=0; i!=nPoints; ++i) {
             //std::cout<< "starting masses[i]: " << masses[i] << std::endl;
-            std::cout<< "dirNames[dd]: " << dirNames[dd] << std::endl ;
+            //std::cout<< "dirNames[dd]: " << dirNames[dd] << std::endl ;
             //if (650+i*100 == 1750) continue;
             //std::printf("\nForm... =  /mlfitoutput%d.root\n", masses[i]);
             int mass = 700+30*i;
@@ -124,24 +229,27 @@ void drawBias () {
             TString name = Form("bias_%d_GeV-",mass)+dirNames[dd];
             //TString title = Form("bias at %d GeV for ",masses[i])+dirNames[dd];
             TString title = Form("bias at %d GeV for ",mass)+dirNames[dd];
-            hists[dd][i] = new TH1D(name,title+";#frac{#mu_{fit}-0.0}{#sigma_{fit}};entries/0.25",10000,-10,10);
+            hists[dd][i] = new TH1D(name,title+";#frac{#mu_{fit}-0.0}{#sigma_{fit}};entries/0.25",100,-10,10);
 
            
             std::cout << "  made histogram " << hists[dd][i]->GetName() << std::endl;
             
-            tree_fit_sb[dd][i]->Draw("(mu-0)/muHiErr>>"+name,"fit_status >= 0","pe");
-            std::cout << "   drew tree (mu-0)/muHiErr>>" << name << std::endl;
-            hists[dd][i]->Fit("gaus","LM","",-2,2);
+            tree_fit_sb[dd][i]->Draw("(mu>0)*mu/muHiErr + (mu<=0)*mu/muLoErr >>"+name,"fit_status == 0","pe");
+            //tree_fit_sb[dd][i]->Draw("mu/muErr >>"+name,"fit_status == 0","pe");
+            //std::cout << "   drew tree (mu-0)/muErr>>" << name << std::endl;
+            hists[dd][i]->Fit("gaus","LM");
+            //hists[dd][i]->Fit("gaus");
             std::cout << "   Fit the tree" << std::endl;
             hists[dd][i]->GetXaxis()->SetTitleOffset(1.2);
             std::cout << "   Formatting the hist " << std::endl;
             //c1[dd][i]->SaveAs(dirNames[dd]+Form("_%d.pdf",masses[i]));
-            c1[dd][i]->SaveAs(dirNames[dd]+Form("biasPdfs/_%d.pdf",mass));
+            //c1[dd][i]->SaveAs(dirNames[dd]+Form("biasPdfs/_%d.pdf",mass));
             
             //std::cout << "  saved file " << dirNames[dd]+Form("_%d.pdf",masses[i]) << std::endl;
             
             
             //biasG[dd]->SetPoint(i,masses[i],hists[dd][i]->GetFunction("gaus")->GetParameter(1));
+            std::cout << "   adding point with value " << hists[dd][i]->GetFunction("gaus")->GetParameter(1) << " at mass " << mass << std::endl;
             biasG[dd]->SetPoint(i,mass,hists[dd][i]->GetFunction("gaus")->GetParameter(1));
             biasG[dd]->SetPointError(i,0,hists[dd][i]->GetFunction("gaus")->GetParError(1));
             
